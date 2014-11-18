@@ -97,13 +97,13 @@ Plugins
 
 To create a plugin called "test":
 
-* Create a module file "plugins/test.py".
-* Use decorators e.g. @on(requestReceived) to link functions to the events fired by the proxy. The decorators are gotRequest, gotResponseTree, gotResponseText, gotResponseImage.
+* Create a module file "plugins/test.py" based on other modules in plugins folder.
+* Use decorators e.g. @on(gotRequest) to link functions to the signals fired by the proxy. The signals are gotRequest, gotResponseTree, gotResponseText, gotResponseImage.
 * Edit the docstring for proxy.py to add the option
 
 To add a plugin to "otherplugins":
 
-* Follow the same format as the other plugins in "otherplugins"
+* Follow the same format as the other plugins in "plugins/otherplugins"
 * Edit the docstring for proxy.py to add the option
 
 Tools

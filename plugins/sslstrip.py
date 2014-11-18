@@ -9,8 +9,6 @@ from tools.pydispatch2 import on
 from mim.proxyserver import gotRequest
 from mim.proxyclient import gotResponseTree, gotResponseText
 
-from mim.proxyclient import ProxyClientFactory
-
 # urls converted https to http
 SSL = set()
 
