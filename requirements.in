@@ -1,0 +1,8 @@
+Pillow==2.6.1
+PyDispatcher==2.0.3
+Twisted==14.0.2
+docopt==0.6.2
+lxml==3.4.0
+pyOpenSSL==0.14
+service-identity==14.0.0
+tldextract==1.5.1
