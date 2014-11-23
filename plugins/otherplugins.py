@@ -9,7 +9,7 @@
     The init function is needed to pass args and then test args["--option"]
 """
 
-from logs import log
+from tools.logs import log
 
 # used by actions
 import os
@@ -127,7 +127,8 @@ def init(args, BEEFPORT, FILESERVER, FILEPORT):
     if args["--cats"]:
         @on(gotResponseTree)
         def cats(sender, tree):
-            """ replace image loaded with link to image server """
+            """ replace image links with link to image on server
+            NOTE: does not replace other links e.g. <a> """
             for item in tree.xpath("//img"):
                 item.attrib["src"] = "http://%s:%s/cats.jpg"%(FILESERVER, FILEPORT)
 

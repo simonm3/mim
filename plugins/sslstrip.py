@@ -1,6 +1,6 @@
 """ converts https links to http but when followed proxies via SSL """
 
-from logs import log
+from tools.logs import log
 
 from urlparse import urlparse
 
@@ -21,8 +21,16 @@ def proxyViaSSL(sender):
 @on(gotResponseTree)
 def strip(sender, tree):
     """ replace ssl links with http """
+    # works with lxml.html
     tree.rewrite_links(removeHTTPS)
-
+    
+    # works with lxml.etree
+    """for elem in tree.xpath("//a"):
+        try:
+            elem.attrib["href"] = removeHTTPS(elem.attrib["href"])
+        except:
+            pass
+    """
 @on(gotResponseText)
 def stripText(sender):
     """ replace https not in links/style tags e.g. in script tags

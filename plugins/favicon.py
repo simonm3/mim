@@ -1,5 +1,5 @@
 """ replace favicon with lock icon """
-from logs import log
+from tools.logs import log
 
 import os
 import lxml
@@ -39,7 +39,7 @@ def sendLockFavicon(sender):
     """ replace favicon with lock file on older browsers """
     if not sender.path.endswith("favicon.ico"):
         return
-    log.debug("{id} Sending lock favicon for {netloc}".format(id=sender.id, netloc=sender.netloc))
+    log.debug("{id} Sending lock favicon for {host}".format(id=sender.id, host=sender.host))
     sender.setResponseCode(200, "OK")
     sender.setHeader("Content-Type", "image/x-icon")
     sender.write(lockicon)

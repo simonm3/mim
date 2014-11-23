@@ -19,7 +19,7 @@
       -s, --sslstrip     Replace https with http then proxy links via https
       -u, --upsidedown   Show images upsidedown
 """
-from logs import log, logfile
+from tools.logs import log, logfile
 from docopt import docopt
 
 from mim.proxyserver import ProxyFactory
@@ -29,6 +29,8 @@ import os
 from tools import fileserver
 from tools.tools import su, setTitle, call
 from tools.bash import ifconfig
+
+from config import version
 
 PROXYPORT = 10000
 BEEFPORT = 3000
@@ -41,14 +43,14 @@ def main():
     # setup logging
     with open(logfile, 'w'):
         pass
-    args = docopt(__doc__, version='proxy 1.0')
+    args = docopt(__doc__, version=version)
     log.info(args)
     log.setLevel(int(args["--loglevel"]))
 
     # connect plugins
     from plugins import otherplugins
     otherplugins.init(args, BEEFPORT, FILESERVER, FILEPORT)
-    for module in os.listdir("plugins"):
+    for module in os.listdir(os.path.dirname(plugins.__file__)):
         if module in ('__init__.py', 'otherplugins.py') or not module.endswith('.py'):
             continue
         module = module[:-3]

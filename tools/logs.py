@@ -2,7 +2,7 @@
     configures logger
 
     Usage:
-        from logs import log, logfile
+        from tools.logs import log, logfile
 
         # log a message
         log.info("hello")
@@ -26,6 +26,9 @@ class LoggerWriter:
     def write(self, buf):
       for line in buf.rstrip().splitlines():
          self.logger.log(self.level, line.rstrip())
+
+    def flush(self):
+        pass
 
 def _getLog(name=None):
     """ returns a logger with defaults:
@@ -71,7 +74,7 @@ def _getLog(name=None):
 
 log = _getLog()
 
-# configure std and err logs
+# configure std and err tools.logs
 stdlog = _getLog("STDOUT")
 errlog = _getLog("STDERR")
 sys.stdout = LoggerWriter(stdlog, logging.INFO)

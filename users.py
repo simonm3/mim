@@ -2,7 +2,7 @@
 
 # shows users
 
-from logs import log, logging
+from tools.logs import log, logging
 from tools.bash import route, nmap, nbtscan, ifconfig
 import socket
 import os

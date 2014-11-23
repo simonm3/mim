@@ -14,8 +14,21 @@ Scripts (run with -h to see usage and options)
 * fakeAP.py:	create fake access point [https://github.com/DanMcInerney/fakeAP]
 * fwreset(bash): 	reset iptables. Usually no need to call directly.
 
-Options to send requests to the proxy
--------------------------------------
+Plugins (for proxy.py)
+----------------------
+
+      --auth         Log userids/passwords
+      --beef         Inject beef hook (browser exploitation framework)
+      --cats         Replace images with cats
+      --favicon      Send lock favicon
+      --inject       Inject data/injection.html
+      --kill         Kill session on first visit to domain
+      --requests     Log requests
+      --sslstrip     Replace https with http then proxy links via https
+      --upsidedown   Show images upsidedown
+
+Alternatives to send requests to the proxy
+------------------------------------------
 
 i. Redirect browser
 
@@ -34,19 +47,6 @@ iii. Run fake access point
 	- connect to Free Wifi from target pc
 	- ./proxy.py [NOTE: run after fakeAP to set firewall settings]
 
-Plugin options for proxy.py
----------------------------
-
-      --auth         Log userids/passwords
-      --beef         Inject beef hook (browser exploitation framework)
-      --cats         Replace images with cats
-      --favicon      Send lock favicon
-      --inject       Inject data/injection.html
-      --kill         Kill session on first visit to domain
-      --requests     Log requests
-      --sslstrip     Replace https with http then proxy links via https
-      --upsidedown   Show images upsidedown
-
 Where does it work
 ------------------
 
@@ -59,6 +59,7 @@ Where does it not work
 * Some security software prevents arp attacks
 * HttpsEverywhere (chrome extension) prevents interception
 * Some websites enforce https
+* Some websites have misformed html and are changed by lxml.html fromstring/tostring. Tried with lxml.etree instead but this causes issues with other pages and is missing functions such as rewrite_links
 
 -----
 
@@ -116,7 +117,7 @@ Tools
 Other files
 -----------
 
-* logs.py: configuration for logs
+* tools.logs.py: configuration for tools.logs
 * log.txt: log of current session. This is cleared on each run.
 
 Requirements

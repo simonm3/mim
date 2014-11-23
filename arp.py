@@ -15,13 +15,14 @@ Uses default interface, router and ip
       -t TARGET, --target     IP address of target [default: 192.168.0.4]
 """
 
-from logs import log, logging
+from tools.logs import log, logging
 logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
 
 import os
 import sys
 from scapy.all import send, ARP, sr1
-from tools.tools import su, setTitle, arp, route
+from tools.tools import su, setTitle
+from tools.bash import arp, route
 import time
 from docopt import docopt
 

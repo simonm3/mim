@@ -1,0 +1,17 @@
+syntax: glob
+
+#### working files not for uploading
+other
+fakeap.py
+
+#### project
+log.txt
+*.pyc
+
+#### setup files
+hooks*
+*.egg-info
+HEAD
+config
+description
+info/exclude

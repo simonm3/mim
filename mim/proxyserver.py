@@ -3,7 +3,7 @@
     usage:
         reactor.listenTCP(port, proxyserver.ProxyFactory())
  """
-from logs import log
+from tools.logs import log
 import logging
 
 from urlparse import urlparse
@@ -44,15 +44,15 @@ class Request(http.Request):
             self.pathquery = '%s?%s' % (self.path, self.query)
         else:
             self.pathquery = self.path
-        self.netloc = self.getHeader("Host")
+        self.host = self.getHeader("Host")
 
         # extract domain (e.g. used to identify sessions)
         try:
-            ext = tldextract.extract(self.netloc)
+            ext = tldextract.extract(self.host)
             self.domain = ".{domain}.{suffix}".format(domain=ext.domain, suffix=ext.suffix)
         except:
             self.domain = ""
-            log.exception("{id} Error in tldextract with {netloc}".format(id=self.id, netloc=self.netloc))
+            log.exception("{id} Error in tldextract with {host}".format(id=self.id, host=self.host))
 
         self.content.seek(0,0)
         self.data = self.content.read()
@@ -80,12 +80,12 @@ class Request(http.Request):
 
         # note ProxyClientFactory expects dict rather than headers type
         if self.scheme == "https":
-            reactor.connectSSL(self.netloc, 443, \
+            reactor.connectSSL(self.host, 443, \
                                 ProxyClientFactory(self.method, self.pathquery, self.version, \
                                 self.getAllHeaders(), self.data, self), \
                                 ssl.ClientContextFactory())
         else:
-            reactor.connectTCP(self.netloc, 80, \
+            reactor.connectTCP(self.host, 80, \
                 ProxyClientFactory(self.method, self.pathquery, self.version, \
                 self.getAllHeaders(), self.data, self))
 

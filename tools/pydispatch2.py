@@ -5,6 +5,7 @@
 
 from logs import log
 from pydispatch.dispatcher import connect, send, disconnect, Any
+DEBUG=False
 
 def on(signal=Any, sender=Any, weak=False):
     """ decorator that connects a function to a signal event
@@ -31,15 +32,18 @@ class Signal(object):
 
     def connect(self, receiver, sender=Any, weak=False):
         """ connect signal to receiver """
-        #log.debug('Connect {receiver.__module__}.{receiver.__name__} to {self}'.format(**locals()))
+        if DEBUG:
+            log.debug('Connect {receiver.__module__}.{receiver.__name__} to {self}'.format(**locals()))
         connect(receiver, signal=self, sender=sender, weak=weak)
 
     def send(self, sender="No sender", *args, **kwargs):
         """ send signal """
-        #log.debug('Send {self} from {sender}'.format(**locals()))
+        if DEBUG:
+            log.debug('Send {self} from {sender}'.format(**locals()))
         send(signal=self, sender=sender, *args, **kwargs)
 
     def disconnect(receiver, sender=Any, weak=False):
         """ Disconnect receiver from signal """
-        #log.debug('Disconnect {receiver} from {self}'.format(**locals()))
+        if DEBUG:
+            log.debug('Disconnect {receiver} from {self}'.format(**locals()))
         disconnect(receiver, signal=self, sender=sender, weak=weak)

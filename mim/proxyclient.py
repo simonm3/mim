@@ -1,11 +1,11 @@
 """ handles response from server and fires signals for subscriber plugins
 """
 
-from logs import log
+from tools.logs import log
 
 from twisted.web import proxy, http
 from twisted.protocols.policies import TimeoutMixin
-import lxml.html
+from lxml.html import fromstring, tostring, HTMLParser
 from tools.tools import zips
 
 from tools.pydispatch2 import Signal
@@ -158,12 +158,12 @@ class ProxyClient(proxy.ProxyClient, TimeoutMixin):
             except:
                 encoding = "ISO-8859-1"
             try:
-                tree = lxml.html.fromstring(self.data, parser=lxml.html.HTMLParser(encoding=encoding))
+                tree = fromstring(self.data, parser=HTMLParser(encoding=encoding))
                 gotResponseTree.send(sender=self, tree=tree)
-                self.data = lxml.html.tostring(tree, encoding=encoding)
+                self.data = tostring(tree, encoding=encoding)
             except:
                 log.exception("{id} Content not parseable len={len} enc={enc}\n{data}"\
-                    .format(id=self.father.id, len=len(self.data), enc=encoding, data=self.data))
+                    .format(id=self.father.id, len=len(self.data), enc=encoding, data=self.data[:100]))
          
         # gotResponseTree used by most plugins but but sometimes may want to see raw text
         gotResponseText.send(sender=self)
