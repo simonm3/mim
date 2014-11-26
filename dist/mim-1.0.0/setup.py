@@ -62,7 +62,7 @@ def defaultSetup():
         download_url = 'https://github.com/{github_user}/{name}/dist/{name}-{version}.tar.gz'
                                 .format(**locals()),
         data_files = ['data/*.*', 'requirements.txt'],
-        packages     = find_packages(exclude = ['*.pyc', 'contrib*', 'tests*', 'docs*']),
+        packages     = find_packages(exclude = ['contrib*', 'tests*', 'docs*']),
         scripts = [f for f in os.listdir(here) if os.path.isfile(f)
                         and f.endswith(".py") and f != "setup.py"],
         install_requires = install_requires())

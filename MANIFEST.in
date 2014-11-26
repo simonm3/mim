@@ -1,5 +1,0 @@
-# non .py files to be included in package
-include data/*.*
-include fwreset
-# must be included as used during install
-include requirements.txt
