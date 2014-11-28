@@ -10,7 +10,7 @@ log.txt
 
 #### setup files
 hooks*
-*.egg-info
+*.egg-info*
 HEAD
 config
 description
