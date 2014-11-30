@@ -25,6 +25,8 @@ from tools.logs import log
 from setuptools import setup, find_packages
 from subprocess import check_output
 import os
+import glob
+
 try:
     from version import __version__
 except:
@@ -59,6 +61,7 @@ def main():
 
 def defaultSetup():
     name = here.split("/")[-1]
+    datafiles = [f for f in glob.glob(os.path.join(here, 'data/*'))]
 
     setupdict=dict(
         # setuptools_git makes install use git tracked files as a base
@@ -72,7 +75,9 @@ def defaultSetup():
         url =  'https://github.com/simonm3/{name}'.format(**locals()),
         install_requires = install_requires(),
 
-        data_files = ['data/*.*', 'requirements.txt'],
+        data_files = [('data', datafiles),
+                      ('', ['requirements.txt'])
+                    ],
         packages     = find_packages(exclude = ['contrib*', 'tests*', 'docs*']),
         include_package_data=True,
         scripts = [f for f in os.listdir(here) if os.path.isfile(f)

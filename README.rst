@@ -10,6 +10,8 @@ Plugins that subscribe to the signals can read and manipulate requests and respo
 Installation
 ------------
 
+NOTE PIP INSTALLATION NOT YET WORKING. HOWEVER SOURCE DOWNLOAD WORKS.
+
 * pip install mim
 * if you want to use the beef framework then: apt-get install beef-xss
 * if you want to use fakeAP: download from https://github.com/DanMcInerney/fakeAP

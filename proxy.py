@@ -49,7 +49,10 @@ def main():
     # connect plugins
     from plugins import otherplugins
     otherplugins.init(args, BEEFPORT, FILESERVER, FILEPORT)
-    for module in os.listdir("plugins"):
+    # get files in plugins folder
+    f = otherplugins.__file__
+    f = f[:f.rfind("/")]
+    for module in os.listdir(f):
         if module in ('__init__.py', 'otherplugins.py') or not module.endswith('.py'):
             continue
         module = module[:-3]
