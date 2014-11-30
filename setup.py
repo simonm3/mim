@@ -40,7 +40,7 @@ def main():
     setupdict["classifiers"]= [ \
           'Development Status :: 4 - Beta',
           'Environment :: Console',
-          'OSI Approved :: GNU General Public License (GPL)',
+          'License :: OSI Approved :: GNU General Public License (GPL)',
           'Operating System :: POSIX :: Linux',
           'Programming Language :: Python'
         ]
