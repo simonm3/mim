@@ -71,10 +71,12 @@ def defaultSetup():
         long_description = long_description(),
         url =  'https://github.com/simonm3/{name}'.format(**locals()),
         install_requires = install_requires(),
-        scripts = [f for f in os.listdir(here) if os.path.isfile(f)
-                   and f.endswith(".py") and f not in ("setup.py", "version.py")
-                   and f in check_output(["git", "ls-files"])],
 
+        data_files = ['data/*.*', 'requirements.txt'],
+        packages     = find_packages(exclude = ['contrib*', 'tests*', 'docs*']),
+        include_package_data=True,
+        scripts = [f for f in os.listdir(here) if os.path.isfile(f)
+                   and f.endswith(".py") and f not in ("setup.py")]
         )
     return setupdict
 
