@@ -3,49 +3,86 @@ MIM Usage
 Description
 -----------
 
-This is a man-in-the-middle proxy server. It fires signals that make it easy for plugins to read and manipulate requests and responses.
+This is a man-in-the-middle proxy server and related utilities. The core proxy passes requests to their destination; and passes the response back to the client unchanged. It also shows a log of requests and responses; and fires signals.
+
+Plugins that subscribe to the signals can read and manipulate requests and responses. A number of example plugins are included. It is very easy to add more using the examples as a template.
+
+Installation
+------------
+
+* pip install mim
+* if you want to use the beef framework then: apt-get install beef-xss
+* if you want to use fakeAP: download from https://github.com/DanMcInerney/fakeAP
+
 
 Scripts (run with -h to see usage and options)
 ----------------------------------------------
 
-* proxy.py:       entry point to start the proxyserver with plugins
-* users.py: 	list users on the network so you can select a target
-* arp.py: 	 arp poison
-* fakeAP.py:	create fake access point [https://github.com/DanMcInerney/fakeAP]
-* fwreset(bash): 	reset iptables. Usually no need to call directly.
+============== ====================================
+script			description
+============== ====================================
+proxy.py      	 start the proxyserver with plugins
+proxy1(bash)	run proxy with default options -ks
+users.py		list users on the network so you can select a target
+arp.py		arp poison
+fakeAP.py	create fake access point
+fwreset(bash) 	reset iptables. Usually no need to call directly.
 
-Plugins (for proxy.py)
-----------------------
+============== ====================================
 
-      --auth         Log userids/passwords
-      --beef         Inject beef hook (browser exploitation framework)
-      --cats         Replace images with cats
-      --favicon      Send lock favicon
-      --inject       Inject data/injection.html
-      --kill         Kill session on first visit to domain
-      --requests     Log requests
-      --sslstrip     Replace https with http then proxy links via https
-      --upsidedown   Show images upsidedown
+Plugin options for proxy.py
+---------------------------
 
-Alternatives to send requests to the proxy
-------------------------------------------
+============== ==================================================
+option			description
+============== ==================================================
+--auth		Log userids/passwords
+--beef            Inject beef hook (browser exploitation framework)
+--cats            Replace images with cats
+--favicon         Replace favicon with lock symbol
+--inject          Inject data/injection.html
+--kill            Kill session on first visit to domain (forces relogin)
+--requests        Log requests
+--sslstrip        Replace https with http then proxy links via https
+--upsidedown      Turn images upsidedown
+
+============== ==================================================
+
+How to send requests to the proxy
+---------------------------------
+
+There are a number of alternative ways of directing traffic to the proxy server:
 
 i. Redirect browser
 
-	- Set browser proxy settings to point to ip address of proxy PC port 10000
-	- ./proxy.py
+* Set browser proxy settings to point to ip address of proxy PC port 10000
+* /proxy.py
 
 ii. Run arp attack
 
-	- ./proxy.py [NOTE: run first else target will have loss of service]
-	- ./users.py to see available machines to target on the local network
-	- sudo ./arp.py -t <ip address> to initiate arp attack on a target ip
+* ./proxy.py [NOTE: run first else target will have loss of service]
+* ./users.py to see available machines to target on the local network
+* sudo ./arp.py -t <ip address> to initiate arp attack on a target ip
 
 iii. Run fake access point
 	
-	- sudo ./fakeAP.py
-	- connect to Free Wifi from target pc
-	- ./proxy.py [NOTE: run after fakeAP to set firewall settings]
+* sudo ./fakeAP.py
+* connect to Free Wifi from target pc
+* ./proxy.py [NOTE: run after fakeAP to set firewall settings]
+
+How to create a plugin
+----------------------
+
+To create a plugin called "test":
+
+* Create a module file "plugins/test.py" based on other modules in plugins folder.
+* Use decorators e.g. @on(gotRequest) to link functions to the signals fired by the proxy. The signals are gotRequest, gotResponseTree, gotResponseText, gotResponseImage.
+* Edit the docstring for proxy.py to add the option
+
+To add a plugin to "otherplugins" (a single file containing many smaller plugins):
+
+* Follow the same format as the other plugins in "plugins/otherplugins"
+* Edit the docstring for proxy.py to add the option
 
 Where does it work
 ------------------
@@ -57,18 +94,23 @@ Where does it not work
 ----------------------
 
 * Some security software prevents arp attacks
+* Https requests typed directly in the address bar will not be intercepted
 * HttpsEverywhere (chrome extension) prevents interception
-* Some websites enforce https
-* Some websites have misformed html and are changed by lxml.html fromstring/tostring. Tried with lxml.etree instead but this causes issues with other pages and is missing functions such as rewrite_links
+* Some websites enforce https via the browser e.g. gmail, facebook
+* Some websites change http links back to https after the page loads e.g. ebay
+* Some websites have misformed html. Calling lxml.html.fromstring then tostring can change the appearance of the page as the parser attempts to correct problems. An alternative is to use lxml.etree instead but this causes issues with other pages and is missing functions such as rewrite_links.
 
 -----
 
-MIM Structure
-=============
+MIM Design
+==========
 
-Built using "twisted" and follows this chain:
+Core files
+----------
 
-* proxy1 (runs proxy.py with selected options)
+Built in python2.7 using "twisted.web" and follows this chain:
+
+* proxy1 (a bash script that runs proxy.py with selected options)
 
    => Proxy.py
 
@@ -93,35 +135,17 @@ Uses pydispatch2 (extended pydispatch) to manage signals
 * proxyclient and proxyserver send signals
 * plugins listen for signals
 
-Plugins
--------
-
-To create a plugin called "test":
-
-* Create a module file "plugins/test.py" based on other modules in plugins folder.
-* Use decorators e.g. @on(gotRequest) to link functions to the signals fired by the proxy. The signals are gotRequest, gotResponseTree, gotResponseText, gotResponseImage.
-* Edit the docstring for proxy.py to add the option
-
-To add a plugin to "otherplugins":
-
-* Follow the same format as the other plugins in "plugins/otherplugins"
-* Edit the docstring for proxy.py to add the option
-
-Tools
------
-
-* fileserver.py: simple file server e.g. to serve images
-* bash.py: wrapper for bash commands
-* pydispatch2.py: decorator that connects a function to a signal
-
 Other files
 -----------
 
-* tools.logs.py: configuration for tools.logs
-* log.txt: log of current session. This is cleared on each run.
+==================== ======================================
+file			description
+==================== ======================================
+tools.fileserver.py	simple file server e.g. to serve images
+tools.bash.py		wrapper for bash commands
+tools.pydispatch2.py	decorator that connects a function to a signal
+tools.logs.py		configuration for tools.logs
+log.txt			log of current session. This is cleared on each run.
 
-Requirements
-------------
+==================== ======================================
 
-* pip install -r requirements.txt
-* apt-get install beef-xss

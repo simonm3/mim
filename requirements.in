@@ -1,10 +1,12 @@
-# run "pip-compile -i" to convert this to requirements.txt
+# this file shows the primary dependencies
+# run "pip-compile" to create requirements.txt with sub-dependencies
+# add -i option to show dependencies
 
-Pillow==2.6.1
-PyDispatcher==2.0.3
-Twisted==14.0.2
-docopt==0.6.2
-lxml==3.4.1
-pyOpenSSL==0.14
-service-identity==14.0.0
-tldextract==1.5.1
+Pillow==2.6.1 				# images
+PyDispatcher==2.0.3			# publish/subscribe
+Twisted==14.0.2				# event driven networking
+docopt==0.6.2				# options
+lxml==3.4.1 				# parser
+pyOpenSSL==0.14				# ssl
+service-identity==14.0.0	# check ssl certificates
+tldextract==1.5.1 			# extract domain from url

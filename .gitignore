@@ -1,16 +1,21 @@
 syntax: glob
 
-#### working files not for uploading
+#### project specific exclusions
 other
 fakeap.py
 
-#### temporary project files
+#### temp files
 log.txt
 *.pyc
 
-#### setup files
+#### dist files created by setup.py sdist
+dist
+*.egg-info
+*.egg
+
+#### other dist files that can be created by setup.py
+build
 hooks*
-*.egg-info*
 HEAD
 config
 description

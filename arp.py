@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 """
 Arp poisons a target; and resets the arp poison on exit.
