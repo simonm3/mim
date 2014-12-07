@@ -9,8 +9,7 @@ proxy1
 log.txt
 *.pyc
 
-#### dist files created by setup.py sdist
-dist
+#### files created by setup.py sdist
 *.egg-info
 *.egg
 
