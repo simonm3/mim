@@ -27,7 +27,7 @@ from twisted.internet import reactor
 import os
 
 from tools import fileserver
-from tools.tools import su, setTitle, call
+from tools.tools import su, setTitle, call, fwreset
 from tools.bash import ifconfig
 from version import __version__
 
@@ -63,7 +63,7 @@ def main():
             __import__("plugins.%s"%module)
 
     # create firewall gateway and route port 80 to proxy
-    su("./fwreset")
+    fwreset()
     su("sysctl net.ipv4.ip_forward=1")
     su("iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port %s"%PROXYPORT)
     su("iptables -t nat -A POSTROUTING -j MASQUERADE")
@@ -83,7 +83,7 @@ def main():
     log.info("starting proxy server on port %s"%PROXYPORT)
     reactor.run()
     
-    su("./fwreset")
+    fwreset()
 
 if __name__ == '__main__':
     setTitle(__file__)

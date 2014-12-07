@@ -21,7 +21,7 @@ logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
 import os
 import sys
 from scapy.all import send, ARP, sr1
-from tools.tools import su, setTitle
+from tools.tools import su, setTitle, fwreset
 from tools.bash import arp, route
 import time
 from docopt import docopt
@@ -47,6 +47,7 @@ def main():
     # arp reset
     if args["--reset"]:
         unpoison(router, args["--target"])
+        fwreset()
         sys.exit()
 
     # check target is reachable before sending ARP poison. Otherwise scapy sends broadcast ARP poison.
@@ -54,7 +55,7 @@ def main():
     response = sr1(ARP(pdst=args["--target"]), timeout=2, verbose=0)
     if not response:
         log.info("%s target not found" % args["--target"])
-        su("./fwreset")
+        fwreset()
         sys.exit()
 
     # change MAC address for extra anonymity
@@ -68,6 +69,7 @@ def main():
 
     poison(router, args["--target"])
     unpoison(router, args["--target"])
+    fwreset()
 
 
 def poison(src, target):

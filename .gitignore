@@ -3,6 +3,7 @@ syntax: glob
 #### project specific exclusions
 other
 fakeap.py
+proxy1
 
 #### temp files
 log.txt

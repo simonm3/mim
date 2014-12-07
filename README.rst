@@ -33,7 +33,6 @@ proxy1(bash)	run proxy with default options -ks
 users.py		list users on the network so you can select a target
 arp.py		arp poison
 fakeAP.py	create fake access point
-fwreset.py 	reset iptables. Usually no need to call directly.
 
 ============== ====================================
 

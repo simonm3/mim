@@ -38,8 +38,6 @@ def main():
 
     ###### add bespoke configuration here #######
 
-    #setupdict["scripts"].extend(["proxy1"])
-
     setupdict["classifiers"]= [ \
           'Development Status :: 4 - Beta',
           'Environment :: Console',
