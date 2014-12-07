@@ -13,13 +13,12 @@ Configuration files (if missing then assumed blank):
     .gitignore       => files to exclude from git and installation
 No other configuration files are needed
 
-To publish to pypi:
+To publish to pypi and github:
     set __version__ in version.py
     git commit -a -m "message" push
     setup.py register sdist upload => register metadata; tar source; upload to pypi
 
-To install:
-    pip install <name>
+Note do not use setup.py install or pip install
 """
 from tools.logs import log
 from setuptools import setup, find_packages
@@ -38,17 +37,28 @@ def main():
     setupdict = defaultSetup()
 
     ###### add bespoke configuration here #######
-    
+
+    #setupdict["scripts"].extend(["proxy1"])
+
     setupdict["classifiers"]= [ \
           'Development Status :: 4 - Beta',
           'Environment :: Console',
           'License :: OSI Approved :: GNU General Public License (GPL)',
           'Operating System :: POSIX :: Linux',
-          'Programming Language :: Python'
-        ]
+          'Programming Language :: Python']
 
-    #################################################
+    ################################################
 
+    """ REQUIRED IF PIP INSTALL EVER USED
+    # remove any scripts not managed by git
+    try:
+        gitfiles = check_output(["git", "ls-files"])
+        setupdict["scripts"] = [s for s in setupdict["scripts"] if s in gitfiles]
+    except:
+        # install machine may not have git installed
+        pass
+    """
+    
     # log the configuration
     output=""
     for k,v in setupdict.items():
@@ -61,10 +71,9 @@ def main():
 
 def defaultSetup():
     name = here.split("/")[-1]
-    datafiles = [f for f in glob.glob(os.path.join(here, 'data/*'))]
 
     setupdict=dict(
-        # setuptools_git makes install use git tracked files as a base
+        # setuptools_git ensures .tar.gz includes all git tracked files
         setup_requires = ["setuptools_git >= 0.3"], 
         author       = 'simon',
         author_email = 'simonm3@gmail.com',
@@ -73,15 +82,15 @@ def defaultSetup():
         description  = name,
         long_description = long_description(),
         url =  'https://github.com/simonm3/{name}'.format(**locals()),
-        install_requires = install_requires(),
+        install_requires = install_requires()
 
-        data_files = [('data', datafiles),
-                      ('', ['requirements.txt'])
-                    ],
-        packages     = find_packages(exclude = ['contrib*', 'tests*', 'docs*']),
-        include_package_data=True,
-        scripts = [f for f in os.listdir(here) if os.path.isfile(f)
-                   and f.endswith(".py") and f not in ("setup.py")]
+        # REQUIRED IF PIP INSTALL EVER USED
+        ###### pip install ignores tar.gz files unless specified below
+        #data_files = [('data', [f for f in glob.glob(os.path.join(here, 'data/*'))]),
+        #              ('', ['requirements.txt'])                    ],
+        #packages     = find_packages(),
+        #scripts = [f for f in os.listdir(here) if os.path.isfile(f)
+        #           and f.endswith(".py")]
         )
     return setupdict
 
@@ -104,19 +113,3 @@ def long_description():
      	return ""
 
 main()
-################### notes on potential changes #################
-""" 
-setuptools_git sets distribution to include the same files as tracked by git
-
-for binary distributions OR if you want to use different distribution from git files....
-        data_files = ['data/*.*', 'requirements.txt'],
-        packages     = find_packages(exclude = ['contrib*', 'tests*', 'docs*']),
-        scripts = [f for f in os.listdir(here) if os.path.isfile(f)
-                   and f.endswith(".py") and f != "setup.py"
-                   and f in check_output(["git", "ls-files"])],
-        include_package_data=True
-Note:
-    data_files MUST include requirements.txt for setup to work
-    scripts probably want to exclude files not git tracked as above
-    binary distribution requires other changes too e.g to pythonpath, path
-"""

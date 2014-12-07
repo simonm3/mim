@@ -9,9 +9,8 @@ from tools.pydispatch2 import on
 from mim.proxyserver import gotRequest
 from mim.proxyclient import gotResponseTree
 
-here = os.path.dirname(os.path.realpath(__file__))
 # lockicon to use as favicon.
-with open("%s/../data/lock.ico"%here) as f:
+with open("%s/../data/lock.ico"%os.getcwd()) as f:
     lockicon = f.read()
 
 @on(gotResponseTree)

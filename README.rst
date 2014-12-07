@@ -10,11 +10,16 @@ Plugins that subscribe to the signals can read and manipulate requests and respo
 Installation
 ------------
 
-NOTE PIP INSTALLATION NOT YET WORKING. HOWEVER SOURCE DOWNLOAD WORKS.
-
-* pip install mim
+* download mim-9.9.9.tar.gz from pypi or https://github.com/simonm3/mim/dist
+* tar -zxvf mim-9.9.9.tar.gz
+* workon <virtualenv>
+* pip install -r requirements.txt
 * if you want to use the beef framework then: apt-get install beef-xss
 * if you want to use fakeAP: download from https://github.com/DanMcInerney/fakeAP
+
+OR git clone from https://github.com/simonm3/mim
+
+pip install does not work properly e.g. arp.py requires su login and path to be set
 
 
 Scripts (run with -h to see usage and options)
@@ -28,7 +33,7 @@ proxy1(bash)	run proxy with default options -ks
 users.py		list users on the network so you can select a target
 arp.py		arp poison
 fakeAP.py	create fake access point
-fwreset(bash) 	reset iptables. Usually no need to call directly.
+fwreset.py 	reset iptables. Usually no need to call directly.
 
 ============== ====================================
 

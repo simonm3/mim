@@ -36,6 +36,9 @@ BEEFPORT = 3000
 FILESERVER = ifconfig().wlanip
 FILEPORT = 8000
 
+here = os.path.abspath(os.path.dirname(__file__))
+os.chdir(here)
+
 def main():
     """ run proxy server and setup callbacks """
     
@@ -50,9 +53,9 @@ def main():
     from plugins import otherplugins
     otherplugins.init(args, BEEFPORT, FILESERVER, FILEPORT)
     # get files in plugins folder
-    f = otherplugins.__file__
-    f = f[:f.rfind("/")]
-    for module in os.listdir(f):
+    folder = otherplugins.__file__
+    folder = folder[:folder.rfind("/")]
+    for module in os.listdir(folder):
         if module in ('__init__.py', 'otherplugins.py') or not module.endswith('.py'):
             continue
         module = module[:-3]
@@ -68,7 +71,7 @@ def main():
 
     # start servers
     if args["--cats"] or args["--inject"]:
-        reactor.listenTCP(FILEPORT, fileserver.Site(fileserver.Data()))
+        reactor.listenTCP(FILEPORT, fileserver.Site(fileserver.Data(os.getcwd()+"/data")))
         log.info("starting file server on %s:%s" %(FILESERVER, FILEPORT))
 
     if args["--beef"]:

@@ -15,16 +15,16 @@ import mimetypes
 from tools import zips, setTitle
 import os
 
-here = os.path.dirname(os.path.realpath(__file__))
-DATA = FilePath("%s/../data"%here)
-
 class Data(Resource):
     isLeaf = True
+
+    def __init__(self, datafolder):
+        self.data = FilePath(datafolder)
 
     def render_GET(self, request):
         # check directory traversal. replace child with preauthChild to allow subfolders
         try:
-            path = DATA.child(request.path.lstrip("/"))
+            path = self.data.child(request.path.lstrip("/"))
         except:
             log.warning("Directory traversal attempt %s"%request.path)
             request.setResponseCode(404)
