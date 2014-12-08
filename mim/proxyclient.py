@@ -69,7 +69,8 @@ class ProxyClient(proxy.ProxyClient, TimeoutMixin):
         """ manipulate and/or save response headers """
         if key.lower() == 'content-length':
             self.contentlength = value
-        elif key.lower() == "strict-transport-security":
+        elif key.lower() in ("content-security-policy", "x-frame-options", \
+                            "x-content-type-options", "strict-transport-security"):
             return
         elif key.lower() == 'set-cookie':
             # remove secure and httponly flags

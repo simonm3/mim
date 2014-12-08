@@ -28,8 +28,7 @@ Scripts (run with -h to see usage and options)
 ============== ====================================
 script			description
 ============== ====================================
-proxy.py      	 start the proxyserver with plugins
-proxy1(bash)	run proxy with default options -ks
+proxy.py      	start the proxyserver with plugins
 users.py		list users on the network so you can select a target
 arp.py		arp poison
 fakeAP.py	create fake access point
