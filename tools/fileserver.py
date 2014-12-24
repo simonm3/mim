@@ -59,6 +59,6 @@ if __name__ == '__main__':
     setTitle(__file__)
 
     port=8000
-    reactor.listenTCP(port, Site(Data()))
+    reactor.listenTCP(port, Site(Data(os.getcwd()+"/data")))
     log.info("Serving on %s."%port)
     reactor.run()

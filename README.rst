@@ -1,5 +1,6 @@
 MIM Usage
 =========
+
 Description
 -----------
 
@@ -10,14 +11,14 @@ Plugins that subscribe to the signals can read and manipulate requests and respo
 Installation
 ------------
 
-* download mim-9.9.9.tar.gz from pypi or https://github.com/simonm3/mim/dist
+* download mim-9.9.9.tar.gz from https://github.com/simonm3/mim/dist
 * tar -zxvf mim-9.9.9.tar.gz
 * workon <virtualenv>
 * pip install -r requirements.txt
 * if you want to use the beef framework then: apt-get install beef-xss
 * if you want to use fakeAP: download from https://github.com/DanMcInerney/fakeAP
 
-OR git clone from https://github.com/simonm3/mim
+OR git clone https://github.com/simonm3/mim
 
 pip install does not work properly e.g. arp.py requires su login and path to be set
 
@@ -30,8 +31,8 @@ script			description
 ============== ====================================
 proxy.py      	start the proxyserver with plugins
 users.py		list users on the network so you can select a target
-arp.py		arp poison
-fakeAP.py	create fake access point
+arp.py			arp poison
+fakeAP.py		create fake access point
 
 ============== ====================================
 
@@ -41,7 +42,7 @@ Plugin options for proxy.py
 ============== ==================================================
 option			description
 ============== ==================================================
---auth		Log userids/passwords
+--auth			  Log userids/passwords
 --beef            Inject beef hook (browser exploitation framework)
 --cats            Replace images with cats
 --favicon         Replace favicon with lock symbol
@@ -53,10 +54,8 @@ option			description
 
 ============== ==================================================
 
-How to send requests to the proxy
----------------------------------
-
-There are a number of alternative ways of directing traffic to the proxy server:
+Alternative ways to send requests to the proxy
+----------------------------------------------
 
 i. Redirect browser
 
@@ -144,13 +143,13 @@ Other files
 -----------
 
 ==================== ======================================
-file			description
+file			     description
 ==================== ======================================
-tools.fileserver.py	simple file server e.g. to serve images
-tools.bash.py		wrapper for bash commands
-tools.pydispatch2.py	decorator that connects a function to a signal
-tools.logs.py		configuration for tools.logs
-log.txt			log of current session. This is cleared on each run.
+tools.fileserver.py	 simple file server e.g. to serve images
+tools.bash.py		 wrapper for bash commands
+tools.pydispatch2.py decorator that connects a function to a signal
+tools.logs.py		 configuration for tools.logs
+log.txt			     log of current session. This is cleared on each run.
 
 ==================== ======================================
 

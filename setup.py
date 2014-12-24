@@ -4,11 +4,13 @@
 simple setup.py with common defaults
 
 assumptions:
-    the project uses git and github.
+    the project uses git and github
+    scripts are in scripts folder
 
 Configuration files (if missing then assumed blank):
     requirements.txt => list of dependencies to be installed
     README.*         => first found is long_description
+    LICENSE.txt      => license
     version.py       => contains __version__
     .gitignore       => files to exclude from git and installation
 No other configuration files are needed
@@ -47,7 +49,6 @@ def main():
 
     ################################################
 
-    """ REQUIRED IF PIP INSTALL EVER USED
     # remove any scripts not managed by git
     try:
         gitfiles = check_output(["git", "ls-files"])
@@ -55,7 +56,6 @@ def main():
     except:
         # install machine may not have git installed
         pass
-    """
     
     # log the configuration
     output=""
@@ -81,14 +81,14 @@ def defaultSetup():
         long_description = long_description(),
         url =  'https://github.com/simonm3/{name}'.format(**locals()),
         install_requires = install_requires()
+        include_package_data = True
 
         # REQUIRED IF PIP INSTALL EVER USED
         ###### pip install ignores tar.gz files unless specified below
         #data_files = [('data', [f for f in glob.glob(os.path.join(here, 'data/*'))]),
         #              ('', ['requirements.txt'])                    ],
-        #packages     = find_packages(),
-        #scripts = [f for f in os.listdir(here) if os.path.isfile(f)
-        #           and f.endswith(".py")]
+        packages     = find_packages(),
+        scripts = [f for f in glob.glob(os.path.join(here, 'scripts/*') if os.path.isfile(f)]
         )
     return setupdict
 
