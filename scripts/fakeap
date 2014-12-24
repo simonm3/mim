@@ -1,1 +1,0 @@
-sudo capture/fakeap.py "$@"
