@@ -2,7 +2,8 @@ syntax: glob
 
 #### project specific exclusions
 other
-fakeap.py
+#capture/fakeap.py
+#scripts/fakeap
 
 #### temp files
 log.txt

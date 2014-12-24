@@ -80,15 +80,12 @@ def defaultSetup():
         description  = name,
         long_description = long_description(),
         url =  'https://github.com/simonm3/{name}'.format(**locals()),
-        install_requires = install_requires()
-        include_package_data = True
-
-        # REQUIRED IF PIP INSTALL EVER USED
-        ###### pip install ignores tar.gz files unless specified below
+        install_requires = install_requires(),
+        include_package_data = True,
         #data_files = [('data', [f for f in glob.glob(os.path.join(here, 'data/*'))]),
         #              ('', ['requirements.txt'])                    ],
         packages     = find_packages(),
-        scripts = [f for f in glob.glob(os.path.join(here, 'scripts/*') if os.path.isfile(f)]
+        #scripts = [f for f in glob.glob(os.path.join(here, 'scripts/*')) if os.path.isfile(f)]
         )
     return setupdict
 

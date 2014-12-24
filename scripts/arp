@@ -1,1 +1,2 @@
+# retain pythonpath
 sudo PYTHONPATH=$PYTHONPATH capture/arp.py "$@"
