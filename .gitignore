@@ -4,7 +4,6 @@ syntax: glob
 other
 capture/fakeap.py
 scripts/fakeap
-requirements.txt
 
 #### temp files
 log.txt
