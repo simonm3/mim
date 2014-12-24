@@ -49,12 +49,11 @@ def main():
     log.setLevel(int(args["--loglevel"]))
 
     # connect plugins
-    from plugins import otherplugins
+    rom plugins import otherplugins
     otherplugins.init(args, BEEFPORT, FILESERVER, FILEPORT)
-    # get files in plugins folder
-    folder = otherplugins.__file__
-    folder = folder[:folder.rfind("/")]
-    for module in os.listdir(folder):
+    # get files in plugins pluginfolder
+    pluginfolder = os.path.dirname(otherplugins.__file__)
+    for module in os.listdir(pluginfolder):
         if module in ('__init__.py', 'otherplugins.py') or not module.endswith('.py'):
             continue
         module = module[:-3]
@@ -71,7 +70,7 @@ def main():
     # start servers
     if args["--cats"] or args["--inject"]:
         reactor.listenTCP(FILEPORT, fileserver.Site( \
-                    fileserver.Data(os.environ["PROJECT_HOME"]+"plugins/data")))
+                fileserver.Data(pluginfolder+"/data")))
         log.info("starting file server on %s:%s" %(FILESERVER, FILEPORT))
 
     if args["--beef"]:

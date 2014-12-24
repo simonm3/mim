@@ -1,2 +1,2 @@
-# retain pythonpath
-sudo PYTHONPATH=$PYTHONPATH capture/arp.py "$@"
+cd "$(dirname "$0")"
+sudo PYTHONPATH=$PYTHONPATH ./arp.py "$@"

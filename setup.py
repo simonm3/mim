@@ -48,13 +48,14 @@ def main():
           'Programming Language :: Python']
 
     ################################################
-
     # remove any scripts not managed by git
     try:
-        gitfiles = check_output(["git", "ls-files"])
+        gitfiles = check_output(["git", "ls-files"]).splitlines()
+        log.info(gitfiles)
+        log.info(setupdict["scripts"])
         setupdict["scripts"] = [s for s in setupdict["scripts"] if s in gitfiles]
     except:
-        # install machine may not have git installed
+        # client may not have git installed
         pass
     
     # log the configuration
@@ -81,11 +82,12 @@ def defaultSetup():
         long_description = long_description(),
         url =  'https://github.com/simonm3/{name}'.format(**locals()),
         install_requires = install_requires(),
-        include_package_data = True,
-        #data_files = [('data', [f for f in glob.glob(os.path.join(here, 'data/*'))]),
-        #              ('', ['requirements.txt'])                    ],
+        
         packages     = find_packages(),
-        #scripts = [f for f in glob.glob(os.path.join(here, 'scripts/*')) if os.path.isfile(f)]
+        include_package_data = True,
+        scripts = ["scripts/"+f for f in os.listdir('scripts')]
+        #data_files = [('plugins', [f for f in glob.glob(os.path.join(here, 'plugins/data/*'))]),
+        #              ('', ['requirements.txt'])],
         )
     return setupdict
 
