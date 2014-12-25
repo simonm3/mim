@@ -49,7 +49,7 @@ def main():
     log.setLevel(int(args["--loglevel"]))
 
     # connect plugins
-    rom plugins import otherplugins
+    from plugins import otherplugins
     otherplugins.init(args, BEEFPORT, FILESERVER, FILEPORT)
     # get files in plugins pluginfolder
     pluginfolder = os.path.dirname(otherplugins.__file__)

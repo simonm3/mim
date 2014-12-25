@@ -38,7 +38,7 @@ os.chdir(here)
 def main():
     setupdict = defaultSetup()
 
-    ###### add bespoke configuration here #######
+    ###### add application specific configuration here #######
 
     setupdict["classifiers"]= [ \
           'Development Status :: 4 - Beta',
@@ -48,15 +48,6 @@ def main():
           'Programming Language :: Python']
 
     ################################################
-    # remove any scripts not managed by git
-    try:
-        gitfiles = check_output(["git", "ls-files"]).splitlines()
-        log.info(gitfiles)
-        log.info(setupdict["scripts"])
-        setupdict["scripts"] = [s for s in setupdict["scripts"] if s in gitfiles]
-    except:
-        # client may not have git installed
-        pass
     
     # log the configuration
     output=""
@@ -85,11 +76,27 @@ def defaultSetup():
         
         packages     = find_packages(),
         include_package_data = True,
-        scripts = ["scripts/"+f for f in os.listdir('scripts')]
+        scripts = scripts()
         #data_files = [('plugins', [f for f in glob.glob(os.path.join(here, 'plugins/data/*'))]),
         #              ('', ['requirements.txt'])],
         )
+
     return setupdict
+
+def scripts():
+    """ get script files and remove any scripts not managed by git """
+
+    s = ["scripts/"+f for f in os.listdir('scripts')]
+
+    try:
+        gitfiles = check_output(["git", "ls-files"]).splitlines()
+        log.info(gitfiles)
+        log.info(s)
+        s = [script for script in s if script in gitfiles]
+    except:
+        # client may not have git installed
+        pass
+    return s
 
 def install_requires():
     """ set install_requires = requirements.txt """

@@ -6,4 +6,4 @@ lxml==3.4.1 				# html parser
 pyOpenSSL==0.14				# ssl client
 service-identity==14.0.0	# check ssl certificates
 tldextract==1.5.1 			# extract domain from url
-scapy==2.2.0-dev			# low level network packet formation
+scapy==2.3.0-dev0			# low level network packet formation

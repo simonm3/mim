@@ -8,20 +8,26 @@ This is a man-in-the-middle proxy server and related utilities. The core proxy p
 
 Plugins that subscribe to the signals can read and manipulate requests and responses. A number of example plugins are included. It is very easy to add more using the examples as a template.
 
-Installation
-------------
+Installation alternatives
+-------------------------
 
-* download mim-9.9.9.tar.gz from https://github.com/simonm3/mim/dist
-* tar -zxvf mim-9.9.9.tar.gz
-* workon <virtualenv>
-* pip install -r requirements.txt
-* if you want to use the beef framework then: apt-get install beef-xss
-* if you want to use fakeAP: download from https://github.com/DanMcInerney/fakeAP
+Download
+	* download mim-9.9.9.tar.gz from https://github.com/simonm3/mim/dist
+	* tar -zxvf mim-9.9.9.tar.gz
+	* workon <virtualenv>
+	* pip install -r requirements.txt
 
-OR git clone https://github.com/simonm3/mim
+Clone
+	* git clone https://github.com/simonm3/mim
 
-pip install does not work properly e.g. arp.py requires su login and path to be set
+Pip
+	* pip install mim
+	* this needs some testing. let me know if it does not work
 
+Installation of Beef
+--------------------
+
+If you want to use the beef framework then: apt-get install beef-xss
 
 Scripts (run with -h to see usage and options)
 ----------------------------------------------
@@ -31,8 +37,8 @@ script			description
 ============== ====================================
 proxy.py      	start the proxyserver with plugins
 users.py		list users on the network so you can select a target
-arp.py			arp poison
-fakeAP.py		create fake access point
+arp				arp poison
+fakeap			create fake access point [from https://github.com/DanMcInerney/fakeAP]
 
 ============== ====================================
 
@@ -59,20 +65,20 @@ Alternative ways to send requests to the proxy
 
 i. Redirect browser
 
+* proxy.py
 * Set browser proxy settings to point to ip address of proxy PC port 10000
-* /proxy.py
 
 ii. Run arp attack
 
-* ./proxy.py [NOTE: run first else target will have loss of service]
-* ./users.py to see available machines to target on the local network
-* sudo ./arp.py -t <ip address> to initiate arp attack on a target ip
+* proxy.py
+* users.py to see available machines to target on the local network
+* arp -t <ip address> to initiate arp attack on a target ip
 
 iii. Run fake access point
 	
-* sudo ./fakeAP.py
+* fakeap
 * connect to Free Wifi from target pc
-* ./proxy.py [NOTE: run after fakeAP to set firewall settings]
+* proxy.py [NOTE: run after fakeAP to set firewall settings]
 
 How to create a plugin
 ----------------------

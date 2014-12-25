@@ -35,9 +35,9 @@ class Data(Resource):
             with path.open('rb') as f:
                 content = f.read()
         except:
-            log.warning("File not found %s"%request.path)
+            log.warning("File not found %s"%path)
             request.setResponseCode(404)
-            return "File not found %s"%request.path
+            return "File not found %s"%path
         
         # set headers
         request.setResponseCode(200)
