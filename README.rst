@@ -4,25 +4,24 @@ MIM Usage
 Description
 -----------
 
-This is a man-in-the-middle proxy server and related utilities. The core proxy passes requests to their destination; and passes the response back to the client unchanged. It also shows a log of requests and responses; and fires signals.
+This is a man-in-the-middle proxy server that shows a log of request and response headers; and fires signals that allow plugins to read and manipulate requests and responses.
 
-Plugins that subscribe to the signals can read and manipulate requests and responses. A number of example plugins are included. It is very easy to add more using the examples as a template.
+A number of plugins are included. It is very easy to add more based on these examples.
 
 Installation alternatives
 -------------------------
 
-Download
-	* download mim-9.9.9.tar.gz from https://github.com/simonm3/mim/dist
-	* tar -zxvf mim-9.9.9.tar.gz
-	* workon <virtualenv>
-	* pip install -r requirements.txt
+Pip
+	* pip install mim
 
 Clone
 	* git clone https://github.com/simonm3/mim
+	* pip install -r requirements.txt
 
-Pip
-	* pip install mim
-	* this needs some testing. let me know if it does not work
+Download .tar.gz
+	* click download button at https://pypi.python.org/packages/source/m/mim
+	* tar -zxvf <filename>.tar.gz
+	* pip install -r requirements.txt
 
 Installation of Beef
 --------------------
@@ -32,15 +31,15 @@ If you want to use the beef framework then: apt-get install beef-xss
 Scripts (run with -h to see usage and options)
 ----------------------------------------------
 
-============== ====================================
+============== =================================
 script			description
-============== ====================================
+============== =================================
 proxy.py      	start the proxyserver with plugins
 users.py		list users on the network so you can select a target
-arp				arp poison
-fakeap			create fake access point [from https://github.com/DanMcInerney/fakeAP]
+arp		arp poison
+fakeap 		create fake access point [https://github.com/DanMcInerney/fakeAP]
 
-============== ====================================
+============== =================================
 
 Plugin options for proxy.py
 ---------------------------

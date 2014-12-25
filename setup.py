@@ -3,16 +3,14 @@
 """
 simple setup.py with common defaults
 
-assumptions:
-    the project uses git and github
-    scripts are in scripts folder
-
-Configuration files (if missing then assumed blank):
+Configuration (all optional):
     requirements.txt => list of dependencies to be installed
     README.*         => first found is long_description
     LICENSE.txt      => license
     version.py       => contains __version__
     .gitignore       => files to exclude from git and installation
+    everything in the scripts folder is treated as a script
+
 No other configuration files are needed
 
 To publish to pypi and github:

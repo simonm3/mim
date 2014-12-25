@@ -2,13 +2,13 @@ syntax: glob
 
 #### project specific exclusions
 other
+dist
 
 #### temp files
 log.txt
 *.pyc
 
 #### files created by setup.py sdist
-dist
 *.egg-info
 *.egg
 
