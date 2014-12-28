@@ -22,7 +22,6 @@ from tools.logs import log
 from setuptools import setup, find_packages
 from subprocess import check_output
 import os
-import glob
 import sys
 
 try:
@@ -33,7 +32,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 os.chdir(here)
 
 def main():
-    log.info("running setup.py with args=%s"%sys.argv)
+    log.info("***** running setup.py with args=%s"%sys.argv)
     setupdict = defaultSetup()
 
     ###### add application specific configuration here #######
@@ -52,6 +51,8 @@ def main():
 def defaultSetup():
     name = here.split("/")[-1]
 
+    install_requires, dependency_links = getRequirements()
+
     setupdict=dict(
     	# basic settings to create sdist tar with files under version control
         setup_requires = ["setuptools_git >= 0.3"],
@@ -62,7 +63,8 @@ def defaultSetup():
         description  = name,
         long_description = long_description(),
         url =  'https://github.com/simonm3/{name}'.format(name=name),
-        install_requires = install_requires(),
+        install_requires = install_requires,
+        dependency_links = dependency_links,
         
         # additional settings for pip install
         packages     = find_packages(),
@@ -92,12 +94,14 @@ def scripts():
         pass
     return s
 
-def install_requires():
-    """ set install_requires = requirements.txt """
+def getRequirements():
+    """ use requirements.txt """
     with open("requirements.txt", "r") as f:
         try:
-            reqs = f.read().splitlines()
-            return [r.split("#")[0].strip() for r in reqs]
+            reqs = [req.split("#")[0].strip() for req in f.read().splitlines()]
+            dependency_links = [req for req in reqs if req.startswith("http")]
+            install_requires = [req for req in reqs if not req.startswith("http")]
+            return install_requires, dependency_links
         except:
             log.exception("problem parsing requirements")
             sys.exit()
