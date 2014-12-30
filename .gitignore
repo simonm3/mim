@@ -3,7 +3,6 @@ syntax: glob
 #### project specific exclusions
 other
 dist
-scripts/test.py
 
 #### temp files
 log.txt

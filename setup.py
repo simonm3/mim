@@ -3,37 +3,41 @@
 """
 simple setup.py with common defaults
 
-Configuration files (all optional):
+Configuration (all optional):
+    root folder name => name and description
     requirements.txt => list of dependencies to be installed
     README.*         => first found is long_description
     LICENSE.txt      => license
     version.py       => contains __version__
     .gitignore       => files to exclude from git and installation
     everything in the scripts folder is treated as a script
-    setup.cfg        => metadata section for setup. adds further data and overrides the above
+    setup.cfg        => [metadata] section. adds further data and overrides the above
+                        [setup] section. autoinc = 0,1,2 increments major/minor/micro version
 
 To publish to pypi and github:
-    set __version__ in version.py
     git commit -a -m "message" push
     setup.py register sdist upload => register metadata; tar source; upload to pypi
 """
 import ConfigParser
 from tools.logs import log
 from setuptools import setup, find_packages
+import pkg_resources
 from subprocess import check_output
 import os
 import sys
 
-try:
-    from version import __version__
-except:
-    __version__ = ""
 here = os.path.abspath(os.path.dirname(__file__))
 os.chdir(here)
 
+try:
+    from version import __version__
+except:
+    __version__ = "0.0.0"
+    with open("version.py", "w") as f:
+        f.write("__version__='%s'"%__version__)
+
 def main():
     log.info("***** running setup.py with args=%s *****"%sys.argv)
-
     setupdict = defaultSetup()
     setupdict.update(cfgSetup())
     logsetup(setupdict)    
@@ -60,13 +64,35 @@ def defaultSetup():
     return setupdict
 
 def cfgSetup():
-    """ returns setup.cfg dict """
+    """ process setup.cfg and return dict """
+    
+    # get setup.cfg
     c = ConfigParser.ConfigParser(allow_no_value=True)
     try:
         c.readfp(open("setup.cfg"))
-        return dict(c.items("metadata"))
     except:
         return dict()
+    
+    # get metadata section
+    try:
+        cfg = dict(c.items("metadata"))
+        cfg["classifiers"] = cfg["classifiers"].splitlines()
+    except:
+        cfg = dict()
+    
+    # autoincrement version
+    try:
+        inc = int(c.get("setup", "autoinc"))
+        v = pkg_resources.parse_version(__version__)
+        vints = map(int, v[:3])
+        vints[inc] += 1
+        cfg["version"] = ".".join(map(str,vints))
+        with open("version.py", "w") as f:
+            f.write("__version__='%s'"%cfg["version"])
+    except:
+        pass
+
+    return cfg
 
 def logsetup(setupdict):
     """ log the setupdict """
@@ -83,7 +109,7 @@ def scripts():
     if sys.argv[1] == "sdist":
         gitfiles = check_output(["git", "ls-files"]).splitlines()
         # must remove else any scripts specified are included even if not managed by git
-        #s = [script for script in s if script in gitfiles]
+        s = [script for script in s if script in gitfiles]
     return s
 
 def install_requires():
