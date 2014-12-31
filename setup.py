@@ -10,7 +10,7 @@ Configuration (all optional):
     LICENSE.txt      => license
     version.py       => contains __version__
     .gitignore       => files to exclude from git and installation
-    everything in the scripts folder is treated as a script
+    everything in the bin folder is treated as a script
     setup.cfg        => [metadata] section. adds further data and overrides the above
                         [setup] section. autoinc = 0,1,2 increments major/minor/micro version
 
@@ -39,7 +39,8 @@ except:
 def main():
     log.info("***** running setup.py with args=%s *****"%sys.argv)
     setupdict = defaultSetup()
-    setupdict.update(cfgSetup())
+    if sys.argv[1] == "sdist":
+        setupdict.update(cfgSetup())
     logsetup(setupdict)    
     setup(**setupdict)
 
@@ -59,7 +60,8 @@ def defaultSetup():
         # additional settings for pip install
         packages     = find_packages(),
         include_package_data = True,
-        scripts = scripts()
+        scripts = scripts(),
+        data_files = [('', data_files())]
     )
     return setupdict
 
@@ -104,13 +106,22 @@ def logsetup(setupdict):
     log.info(output)
 
 def scripts():
-    """ get files from scripts folder and remove any scripts not managed by git """
-    s = ["scripts/"+f for f in os.listdir('scripts')]
+    """ get files from scripts folder and remove any not managed by git """
+    files = ["scripts/"+f for f in os.listdir('bin') if os.path.isfile(f)]
     if sys.argv[1] == "sdist":
         gitfiles = check_output(["git", "ls-files"]).splitlines()
         # must remove else any scripts specified are included even if not managed by git
-        s = [script for script in s if script in gitfiles]
-    return s
+        files = [script for script in files if script in gitfiles]
+    return files
+
+def data_files():
+    """ get files from root folder and remove any not managed by git """
+    files = [f for f in os.listdir(here) if os.path.isfile(f)]
+    if sys.argv[1] == "sdist":
+        gitfiles = check_output(["git", "ls-files"]).splitlines()
+        # must remove else any scripts specified are included even if not managed by git
+        files = [f for f in files if f in gitfiles]
+    return files
 
 def install_requires():
     """ use requirements.txt """
