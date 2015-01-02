@@ -5,7 +5,6 @@
 """
 from tools.logs import log
 import logging
-
 from urlparse import urlparse
 import os
 import tldextract

@@ -19,19 +19,17 @@
       -s, --sslstrip     Replace https with http then proxy links via https
       -u, --upsidedown   Show images upsidedown
 """
-from tools.logs import log, logfile
+from mim.tools.logs import log, logfile
 from docopt import docopt
-
 from mim.proxyserver import ProxyFactory
 from twisted.internet import reactor
 import os
 
-from tools import fileserver
-from tools.tools import su, setTitle, fwreset
-from tools.bash import ifconfig
+from mim.tools import fileserver
+from mim.tools.tools import su, setTitle, fwreset
+from mim.tools.bash import ifconfig
 from subprocess import call
 from version import __version__
-
 
 PROXYPORT = 10000
 BEEFPORT = 3000
@@ -40,7 +38,6 @@ FILEPORT = 8000
 
 def main():
     """ run proxy server and setup callbacks """
-    
     # setup logging
     with open(logfile, 'w'):
         pass
@@ -49,7 +46,8 @@ def main():
     log.setLevel(int(args["--loglevel"]))
 
     # connect plugins
-    from plugins import otherplugins
+    from mim.plugins import otherplugins
+    log.debug("loaded %s"%otherplugins)
     otherplugins.init(args, BEEFPORT, FILESERVER, FILEPORT)
     # get files in plugins pluginfolder
     pluginfolder = os.path.dirname(otherplugins.__file__)
@@ -58,7 +56,8 @@ def main():
             continue
         module = module[:-3]
         if args["--%s"%module]:
-            __import__("plugins.%s"%module)
+            __import__("mim.plugins.%s"%module)
+            log.debug("loaded %s"%module)
 
     # create firewall gateway and route port 80 to proxy
     fwreset()
@@ -83,7 +82,6 @@ def main():
     reactor.run()
     
     fwreset()
-
 if __name__ == '__main__':
     setTitle(__file__)
     main()

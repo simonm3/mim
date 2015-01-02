@@ -40,10 +40,7 @@ def _getLog(name=None):
     global logfile
 
     # configure format including line number to trace message
-    if name in ("STDOUT", "STDERR"):
-        formatter = logging.Formatter('[%(name)s:%(levelname)s]:%(message)s')
-    else:
-        formatter = logging.Formatter('[%(name)s:%(levelname)s]:%(message)s\n(%(pathname)s\%(lineno)s, time=%(asctime)s)\n','%H:%M')
+    formatter = logging.Formatter('[%(name)s:%(levelname)s]:%(message)s\n(%(pathname)s\%(lineno)s, time=%(asctime)s)\n','%H:%M')
 
     # configure streamhandler
     streamhandler = logging.StreamHandler()
@@ -74,8 +71,10 @@ def _getLog(name=None):
 
 log = _getLog()
 
-# configure std and err tools.logs
+# redirect std and err to logger
 stdlog = _getLog("STDOUT")
 errlog = _getLog("STDERR")
-sys.stdout = LoggerWriter(stdlog, logging.INFO)
-sys.stderr = LoggerWriter(errlog, logging.ERROR)
+# note test if exists as will crash if configured twice
+if len(stdlog.handlers) == 0:
+    sys.stdout = LoggerWriter(stdlog, logging.INFO)
+    sys.stderr = LoggerWriter(errlog, logging.ERROR)
