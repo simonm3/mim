@@ -4,7 +4,10 @@ loggers:
     '':
        level: INFO
        handlers: [console, file]
-       propogate: false
+    simple:
+       level: INFO
+       handlers: [simpleconsole]
+       propagate: no
 handlers:
     console:
         class:     logging.StreamHandler
@@ -17,7 +20,14 @@ handlers:
         formatter: long
         filename:  log.txt
         mode:      w
+    simpleconsole:
+        class:     logging.StreamHandler
+        level:     INFO
+        formatter: short
+        stream:    ext://sys.stdout
 formatters:
     long:
         format:  '[%(name)s:%(levelname)s]:%(message)s\n(%(pathname)s\%(lineno)s, time:%(asctime)s)\n'
         datefmt: '%H:%M'
+    short:
+        format:  '[%(levelname)s]:%(message)s'

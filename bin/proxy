@@ -20,13 +20,10 @@
       -u, --upsidedown   Show images upsidedown
 """
 import os
+import sys
 
-# configure logging
 import yaml
 import logging.config
-config = yaml.load(open(os.path.join(os.path.dirname( __file__), os.pardir, "logging.yaml")))
-config["formatters"]["long"]["format"] = config["formatters"]["long"]["format"].replace("\\n", "\n")
-logging.config.dictConfig(config)
 import logging as log
 
 from docopt import docopt
@@ -34,7 +31,7 @@ from mim.proxyserver import ProxyFactory
 from twisted.internet import reactor
 
 from mim.tools import fileserver
-from mim.tools.tools import su, setTitle, fwreset
+from mim.tools.tools import su, setTitle, fwreset, LoggerWriter
 from mim.tools.bash import ifconfig
 from subprocess import call
 
@@ -51,6 +48,15 @@ FILEPORT = 8000
 
 def main():
     """ run proxy server and setup callbacks """
+    
+    # configure logging
+    config = yaml.load(open(os.path.join(os.path.dirname( __file__), os.pardir, "logging.yaml")))
+    config["formatters"]["long"]["format"] = config["formatters"]["long"]["format"].replace("\\n", "\n")
+    logging.config.dictConfig(config)
+    sys.stdout = LoggerWriter(log.getLogger("simple"), log.INFO)
+    sys.stderr = LoggerWriter(log.getLogger("simple"), log.ERROR)
+
+    # get args
     args = docopt(__doc__, version="version=1.0.0 package version=%s"%__version__)
     log.info(args)
     log.getLogger().setLevel(int(args["--loglevel"]))

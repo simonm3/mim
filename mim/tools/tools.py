@@ -35,6 +35,19 @@ class zips(object):
     def decompress(self, text):
         return zlib.decompress(text, self.methods[self.method])
 
+class LoggerWriter:
+    """ redirects a stream such as stderr/stdout to log file """
+    def __init__(self, logger, level):
+        self.logger = logger
+        self.level = level
+ 
+    def write(self, buf):
+      for line in buf.rstrip().splitlines():
+         self.logger.log(self.level, line.rstrip())
+
+    def flush(self):
+        pass
+
 def fwreset():
     """ reset firewall settings """
     su("sysctl net.ipv4.ip_forward=0")
