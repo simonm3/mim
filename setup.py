@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
 """
+NOTE: THIS FILE HAS HAD ONLY LIMITED TESTING!!!
+
 This file provides a default setup.py for use with any python/git source distribution.
 The defaults can be overridden using setup.cfg
-
-NOTE: THIS HAS ONLY HAD LIMITED TESTING!!!
 
 Defaults:
     name             = root folder name
@@ -27,17 +27,18 @@ Example of setup.cfg:
         # these settings control behaviour of the default setup.py
         autoinc = 0,1,2 # increments major/minor/micro version when you call setup.py sdist
 
-To publish on pypi for first time
-    setup.py register sdist upload
+Usage:
+    To publish on pypi for first time
+        setup.py register sdist upload
 
-To publish on pypi 2nd time
-    setup.py sdist upload
+    To update pypi
+        setup.py sdist upload
 
-To upload to github after setup run (setup.py stages changes but does not commit)
-    git commit -am <message> push
+    To upload to github after setup run (setup.py stages changes but does not commit)
+        git commit -am <message> push
 
-To install:
-    pip install <name>
+    To install:
+        pip install <name>
 """
 import ConfigParser
 import logging as log
@@ -71,17 +72,18 @@ def main():
         log.warning("setup.cfg not found")
         c = None
 
+    # sdist processing for setup not for install
+    # update version; then git add new and deleted files to ensure correct files included
     if "sdist" in sys.argv:
         updateversion(c)
-        # update git with new and deleted files to ensure correct files included
         try:
             check_output(["git", "add", "-A"])
         except:
             log.exception("Error updating git files")
             sys.exit()
         
+    # start with defaults then add setup.cfg
     setupdict = defaultSetup()
-   
     setupdict.update(cfgSetup(c))
     
     logsetup(setupdict)    

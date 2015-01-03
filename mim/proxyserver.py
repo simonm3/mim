@@ -55,7 +55,7 @@ class Request(http.Request):
         self.content.seek(0,0)
         self.data = self.content.read()
 
-        if log.getEffectiveLevel()==log.DEBUG:
+        if log.getLogger().getEffectiveLevel()==log.DEBUG:
             self.setHeader("myid", self.id)
 
         #log.debug("%s RAW REQUEST:\n%s" % (self.id, self.getRequest()))
