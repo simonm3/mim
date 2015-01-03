@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 
 """
-This file provides a standard setup.py for use with any python/git source distribution.
+This file provides a default setup.py for use with any python/git source distribution.
 The defaults can be overridden using setup.cfg
+
+NOTE: THIS HAS ONLY HAD LIMITED TESTING!!!
 
 Defaults:
     name             = root folder name
@@ -11,22 +13,24 @@ Defaults:
     dependency_links = requirements.txt lines starting http
     long_description = first README.*
     license          = first line of LICENSE.txt
-    version          = root/version.py with a line such as __version__ = "9.9.9"
+    version          = root/version.py with a line __version__ = "9.9.9"
     included files   = everything managed by git (see git ls-files)
     excluded files   = .gitignore
     scripts          = files in bin folder
 
-Example of setup.cfg to override defaults:
+Example of setup.cfg:
     [metadata]
+        # these settings get passed to setuptools.setup()
         name=myproject # overrides default setting
         author=simon   # adds new setting
     [setup]
+        # these settings control behaviour of the default setup.py
         autoinc = 0,1,2 # increments major/minor/micro version when you call setup.py sdist
 
-To submit to pypi for first time
+To publish on pypi for first time
     setup.py register sdist upload
 
-To submit to pypi 2nd time
+To publish on pypi 2nd time
     setup.py sdist upload
 
 To upload to github after setup run (setup.py stages changes but does not commit)
@@ -36,7 +40,9 @@ To install:
     pip install <name>
 """
 import ConfigParser
-from mim.tools.logs import log
+import logging as log
+log.basicConfig(level=log.INFO)
+
 from setuptools import setup, find_packages
 import pkg_resources
 from subprocess import check_output
@@ -49,6 +55,7 @@ os.chdir(here)
 try:
     from version import __version__
 except:
+    # if version file missing then create it
     __version__ = "0.0.0"
     with open("version.py", "w") as f:
         f.write("__version__='%s'"%__version__)

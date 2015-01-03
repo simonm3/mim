@@ -1,6 +1,8 @@
 """ wrapper for bash commands that parses their output into vars
     e.g. route() => {'iface': 'wlan0', 'router': '192.168.0.1'}
 """
+import logging as log
+
 from subprocess import call, check_output, STDOUT
 import shlex
 import socket

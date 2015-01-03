@@ -3,17 +3,16 @@
     usage:
         reactor.listenTCP(port, proxyserver.ProxyFactory())
 """
-from tools.logs import log
-import logging
+import logging as log
 from urlparse import urlparse
 import os
 import tldextract
-from tools.tools import zips
+from mim.tools.tools import zips
 
 from twisted.internet import reactor, ssl
 from twisted.web import http
-from proxyclient import ProxyClientFactory
-from tools.pydispatch2 import Signal
+from mim.proxyclient import ProxyClientFactory
+from mim.tools.pydispatch2 import Signal
 
 gotRequest = Signal("gotRequest")
 
@@ -56,7 +55,7 @@ class Request(http.Request):
         self.content.seek(0,0)
         self.data = self.content.read()
 
-        if log.getEffectiveLevel()==logging.DEBUG:
+        if log.getEffectiveLevel()==log.DEBUG:
             self.setHeader("myid", self.id)
 
         #log.debug("%s RAW REQUEST:\n%s" % (self.id, self.getRequest()))

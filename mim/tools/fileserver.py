@@ -5,14 +5,14 @@
     run from command prompt on port 8000
     or reactor.listenTCP(FILEPORT, fileserver.Site(fileserver.Data()))
 """
+import logging as log
 
 from twisted.web.server import Site
 from twisted.internet import reactor
 from twisted.web.resource import Resource
 from twisted.python.filepath import FilePath
-from logs import log
 import mimetypes
-from tools import zips, setTitle
+from mim.tools.tools import zips, setTitle
 import os
 
 class Data(Resource):

@@ -34,10 +34,10 @@ Scripts (run with -h to see usage and options)
 ============== =================================
 script			description
 ============== =================================
-proxy.py      	start the proxyserver with plugins
-users.py		list users on the network so you can select a target
-arp		arp poison
-fakeap 		create fake access point [https://github.com/DanMcInerney/fakeAP]
+proxy        	start the proxyserver with plugins
+users	        list users on the network so you can select a target
+arp		        start arp poison
+fakeap 		    create fake access point [https://github.com/DanMcInerney/fakeAP]
 
 ============== =================================
 

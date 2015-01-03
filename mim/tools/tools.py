@@ -1,6 +1,7 @@
 """ miscellaneous tools """    
 
-from logs import log
+import logging as log
+
 import os
 from subprocess import call
 import shlex
@@ -13,7 +14,7 @@ def su(cmd):
 
 def setTitle(title):
     """ set title on linux terminal window """
-    os.system('echo "\033]0;%s\007"'%title)
+    os.system('echo -n "\033]0;%s\007"'%title)
 
 class zips(object):
     """ compress/decompress using zlib, gzip, deflate 

@@ -1,0 +1,23 @@
+version: 1
+disable_existing_loggers: false
+loggers:
+    '':
+       level: INFO
+       handlers: [console, file]
+       propogate: false
+handlers:
+    console:
+        class:     logging.StreamHandler
+        level:     INFO
+        formatter: long
+        stream:    ext://sys.stdout
+    file:
+        class:     logging.FileHandler
+        level:     INFO
+        formatter: long
+        filename:  log.txt
+        mode:      w
+formatters:
+    long:
+        format:  '[%(name)s:%(levelname)s]:%(message)s\n(%(pathname)s\%(lineno)s, time:%(asctime)s)\n'
+        datefmt: '%H:%M'

@@ -1,11 +1,11 @@
 """ converts https links to http but when followed proxies via SSL """
 
-from tools.logs import log
+import logging as log
 
 from urlparse import urlparse
 
 # callbacks
-from tools.pydispatch2 import on
+from mim.tools.pydispatch2 import on
 from mim.proxyserver import gotRequest
 from mim.proxyclient import gotResponseTree, gotResponseText
 

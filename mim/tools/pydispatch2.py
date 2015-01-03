@@ -3,7 +3,8 @@
     connects signals to callback functions (publish/subscribe model)
 """
 
-from logs import log
+import logging as log
+
 from pydispatch.dispatcher import connect, send, disconnect, Any
 DEBUG=False
 

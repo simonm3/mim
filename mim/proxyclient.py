@@ -1,14 +1,14 @@
 """ handles response from server and fires signals for subscriber plugins
 """
 
-from tools.logs import log
+import logging as log
 
 from twisted.web import proxy, http
 from twisted.protocols.policies import TimeoutMixin
 from lxml.html import fromstring, tostring, HTMLParser
-from tools.tools import zips
+from mim.tools.tools import zips
 
-from tools.pydispatch2 import Signal
+from mim.tools.pydispatch2 import Signal
 
 gotResponseTree = Signal("gotResponseTree")
 gotResponseText = Signal("gotResponseText")

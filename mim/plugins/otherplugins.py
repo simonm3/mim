@@ -9,7 +9,7 @@
     The init function is needed to pass args and then test args["--option"]
 """
 
-from tools.logs import log
+import logging as log
 
 # used by actions
 import os
@@ -20,9 +20,9 @@ import lxml
 from PIL import Image
 
 # callbacks
-from tools.pydispatch2 import on
-from proxyserver import gotRequest
-from proxyclient import gotResponseTree, gotResponseImage
+from mim.tools.pydispatch2 import on
+from mim.proxyserver import gotRequest
+from mim.proxyclient import gotResponseTree, gotResponseImage
 
 def init(args, BEEFPORT, FILESERVER, FILEPORT):
     """ if option selected in args then connect callback function to signal """

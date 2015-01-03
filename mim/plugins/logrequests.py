@@ -1,15 +1,13 @@
 """ log all requests """
-from tools.logs import log
+import logging as log
 
 # callbacks
-from tools.pydispatch2 import on
+from mim.tools.pydispatch2 import on
 from mim.proxyserver import gotRequest
 from mim.proxyclient import gotResponseTree
 
 loaded = set()
 visited = set()
-
-log.info("loaded logreqiesstsf")
 
 @on(gotResponseTree)
 def storeLoaded(sender, tree):

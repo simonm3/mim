@@ -1,2 +1,5 @@
 #!/bin/bash
-./proxy.py "$@" -ks
+
+# start proxy with a default set of options
+cd "$(dirname "$0")"
+./proxy "$@" -ks
