@@ -6,13 +6,12 @@ import logging as log
 from twisted.web import proxy, http
 from twisted.protocols.policies import TimeoutMixin
 from lxml.html import fromstring, tostring, HTMLParser
-from mim.tools.tools import zips
+from mim.tools import zips
 
-from mim.tools.pydispatch2 import Signal
-
-gotResponseTree = Signal("gotResponseTree")
-gotResponseText = Signal("gotResponseText")
-gotResponseImage = Signal("gotResponseImage")
+from events import Events
+class MyEvents(Events):
+    __events__ = ('gotResponseImage', 'gotResponseTree', 'gotResponseText')
+events = MyEvents()
 
 class ProxyClient(proxy.ProxyClient, TimeoutMixin):
     """ sends request to server and processes response """ 
@@ -34,7 +33,7 @@ class ProxyClient(proxy.ProxyClient, TimeoutMixin):
         # sometimes request disconnects BEFORE notifyFinish() has been trapped
         # could not find a way to detect this without referring to _disconnected
         if self.father._disconnected:
-            log.debug("{id} Request disconnected before proxy client initialised" \
+            log.warning("{id} Request disconnected before proxy client initialised" \
                                 .format(id=self.father.id))
             self.finish()
             return
@@ -122,7 +121,7 @@ class ProxyClient(proxy.ProxyClient, TimeoutMixin):
 
             # process images
             if self.imagetype:
-                gotResponseImage.send(sender=self)
+                events.gotResponseImage(self)
 
             # process HTML from successful requests. Ignore HTML from 404 not found etc..
             elif self.isHTML and self.father.code == 200:
@@ -160,14 +159,14 @@ class ProxyClient(proxy.ProxyClient, TimeoutMixin):
                 encoding = "ISO-8859-1"
             try:
                 tree = fromstring(self.data, parser=HTMLParser(encoding=encoding))
-                gotResponseTree.send(sender=self, tree=tree)
+                events.gotResponseTree(self, tree)
                 self.data = tostring(tree, encoding=encoding)
             except:
                 log.exception("{id} Content not parseable len={len} enc={enc}\n{data}"\
                     .format(id=self.father.id, len=len(self.data), enc=encoding, data=self.data[:100]))
          
         # gotResponseTree used by most plugins but but sometimes may want to see raw text
-        gotResponseText.send(sender=self)
+        events.gotResponseText(self)
 
         if zipencoding:
             self.data = zips(zipencoding).compress(self.data)

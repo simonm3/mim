@@ -30,66 +30,43 @@ from docopt import docopt
 from mim.proxyserver import ProxyFactory
 from twisted.internet import reactor
 
-from mim.tools import fileserver
-from mim.tools.tools import su, setTitle, fwreset, LoggerWriter
-from mim.tools.bash import ifconfig
-from subprocess import call
+from mim.tools import su, setTitle, fwreset, LoggerWriter
 
-__version__="Unspecified"
-try:
-    execfile(os.path.join(os.path.dirname( __file__), os.pardir, "version.py"))
-except:
-    pass
+from mim.version import __version__
+from importlib import import_module
 
 PROXYPORT = 10000
-BEEFPORT = 3000
-FILESERVER = ifconfig().wlanip
-FILEPORT = 8000
 
 def main():
     """ run proxy server and setup callbacks """
     
     # configure logging
-    config = yaml.load(open(os.path.join(os.path.dirname( __file__), os.pardir, "logging.yaml")))
+    config = yaml.load(open(os.path.join(os.path.dirname( __file__), os.pardir, os.pardir, "logging.yaml")))
     config["formatters"]["long"]["format"] = config["formatters"]["long"]["format"].replace("\\n", "\n")
     logging.config.dictConfig(config)
     sys.stdout = LoggerWriter(log.getLogger("simple"), log.INFO)
     sys.stderr = LoggerWriter(log.getLogger("simple"), log.ERROR)
 
     # get args
-    args = docopt(__doc__, version="version=1.0.0 package version=%s"%__version__)
+    args = docopt(__doc__, version="version=%s"%__version__)
     log.info(args)
     log.getLogger().setLevel(int(args["--loglevel"]))
 
     # connect plugins
-    from mim.plugins import otherplugins
-    otherplugins.init(args, BEEFPORT, FILESERVER, FILEPORT)
-    # get files in plugins pluginfolder
-    pluginfolder = os.path.dirname(otherplugins.__file__)
+    pluginfolder = os.path.join(os.path.dirname(__file__), os.pardir, "plugins")
     for module in os.listdir(pluginfolder):
-        if module in ('__init__.py', 'otherplugins.py') or not module.endswith('.py'):
+        if module in ('__init__.py') or not module.endswith('.py'):
             continue
         module = module[:-3]
-        if args["--%s"%module]:
-            __import__("mim.plugins.%s"%module)
-
+        mod = import_module("mim.plugins.%s"%module)
+        mod.init(args)
+  
     # create firewall gateway and route port 80 to proxy
     fwreset()
     su("sysctl net.ipv4.ip_forward=1")
     su("iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port %s"%PROXYPORT)
     su("iptables -t nat -A POSTROUTING -j MASQUERADE")
     log.info("iptables redirecting port 80==>%s"%PROXYPORT)
-
-    # start servers
-    if args["--cats"] or args["--inject"]:
-        reactor.listenTCP(FILEPORT, fileserver.Site( \
-                fileserver.Data(pluginfolder+"/data")))
-        log.info("starting file server on %s:%s" %(FILESERVER, FILEPORT))
-
-    if args["--beef"]:
-        os.chdir("/usr/share/beef-xss")
-        call(['sudo', './beef'])
-        log.info("starting beef server on %s" %BEEFPORT)
 
     reactor.listenTCP(PROXYPORT, ProxyFactory())
     log.info("starting proxy server on port %s"%PROXYPORT)

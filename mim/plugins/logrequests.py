@@ -2,14 +2,17 @@
 import logging as log
 
 # callbacks
-from mim.tools.pydispatch2 import on
-from mim.proxyserver import gotRequest
-from mim.proxyclient import gotResponseTree
+from mim.proxyserver import events as s_events
+from mim.proxyclient import events as c_events
 
 loaded = set()
 visited = set()
 
-@on(gotResponseTree)
+def init(args):
+    log.info("register events")
+    c_events.gotResponseTree += storeLoaded
+    s_events.gotRequest += logRequest
+
 def storeLoaded(sender, tree):
     """ store image and script links so they are not logged """
     for item in tree.xpath("//img|//script|iframe"):
@@ -23,11 +26,10 @@ def storeLoaded(sender, tree):
         except:
             pass
 
-@on(gotRequest)
 def logRequest(sender):
     """ log requests """
     if sender.host in loaded or sender.domain in visited:
-        return
+        pass#return
 
     visited.add(sender.domain)
     excluded = ['jpg', 'jpeg', 'js', 'json', 'gif', 'png', 'css', 'ico', 'js', 'svg', 'ttf', 'woff']

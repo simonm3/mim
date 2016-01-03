@@ -5,16 +5,16 @@
 """
 import logging as log
 from urlparse import urlparse
-import os
 import tldextract
-from mim.tools.tools import zips
+from mim.tools import zips
 
 from twisted.internet import reactor, ssl
 from twisted.web import http
 from mim.proxyclient import ProxyClientFactory
-from mim.tools.pydispatch2 import Signal
-
-gotRequest = Signal("gotRequest")
+from events import Events
+class MyEvents(Events):
+    __events__ = ('gotRequest')
+events = MyEvents()
 
 class Request(http.Request):
     """ proxy requests via HTTP 
@@ -60,7 +60,7 @@ class Request(http.Request):
 
         #log.debug("%s RAW REQUEST:\n%s" % (self.id, self.getRequest()))
         
-        gotRequest.send(sender=self)
+        events.gotRequest(self)
 
         # callback may have finished the connection
         if self.finished:

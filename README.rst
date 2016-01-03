@@ -4,29 +4,17 @@ MIM Usage
 Description
 -----------
 
-This is a man-in-the-middle proxy server that shows a log of request and response headers; and fires signals that allow plugins to read and manipulate requests and responses.
+This is a man-in-the-middle proxy server. Plugins can subscribe to events to
+read and manipulate requests and responses.
 
-A number of plugins are included. It is very easy to add more based on these examples.
+A number of plugins are included. It is easy to add more based on these.
 
-Installation alternatives
--------------------------
+Installation
+------------
 
-Pip
-	* pip install mim
-
-Clone
-	* git clone https://github.com/simonm3/mim
-	* pip install -r requirements.txt
-
-Download .tar.gz
-	* click download button at https://pypi.python.org/packages/source/m/mim
-	* tar -zxvf <filename>.tar.gz
-	* pip install -r requirements.txt
-
-Installation of Beef
---------------------
-
-If you want to use the beef framework then: apt-get install beef-xss
+* git clone https://github.com/simonm3/mim
+* pip install -r requirements.txt
+* If you want to use the beef framework then: apt-get install beef-xss
 
 Scripts (run with -h to see usage and options)
 ----------------------------------------------
@@ -34,10 +22,10 @@ Scripts (run with -h to see usage and options)
 ============== =================================
 script			description
 ============== =================================
-proxy        	start the proxyserver with plugins
-users	        list users on the network so you can select a target
-arp		        start arp poison
-fakeap 		    create fake access point [https://github.com/DanMcInerney/fakeAP]
+proxy.py       start the proxyserver with plugins
+users.py       list users on the network so you can select a target
+arp.py	    start arp poison
+fakeap.sh	    create fake access point [https://github.com/DanMcInerney/fakeAP]
 
 ============== =================================
 
@@ -71,7 +59,7 @@ ii. Run arp attack
 
 * proxy.py
 * users.py to see available machines to target on the local network
-* arp -t <ip address> to initiate arp attack on a target ip
+* arp <target> to initiate arp attack on a target ip
 
 iii. Run fake access point
 	
@@ -82,15 +70,8 @@ iii. Run fake access point
 How to create a plugin
 ----------------------
 
-To create a plugin called "test":
-
-* Create a module file "plugins/test.py" based on other modules in plugins folder.
-* Use decorators e.g. @on(gotRequest) to link functions to the signals fired by the proxy. The signals are gotRequest, gotResponseTree, gotResponseText, gotResponseImage.
-* Edit the docstring for proxy.py to add the option
-
-To add a plugin to "otherplugins" (a single file containing many smaller plugins):
-
-* Follow the same format as the other plugins in "plugins/otherplugins"
+* Create a module file in plugins folder based on existing plugins
+* Include init function to subscribe to events and initialise
 * Edit the docstring for proxy.py to add the option
 
 Where does it work
@@ -139,10 +120,6 @@ Built in python2.7 using "twisted.web" and follows this chain:
 
    => internet
 
-Uses pydispatch2 (extended pydispatch) to manage signals
-
-* proxyclient and proxyserver send signals
-* plugins listen for signals
 
 Other files
 -----------
@@ -150,11 +127,9 @@ Other files
 ==================== ======================================
 file			     description
 ==================== ======================================
-tools.fileserver.py	 simple file server e.g. to serve images
-tools.bash.py		 wrapper for bash commands
-tools.pydispatch2.py decorator that connects a function to a signal
-tools.logs.py		 configuration for tools.logs
-log.txt			     log of current session. This is cleared on each run.
-
+fileserver.py	     simple file server to serve images
+bash.py		         wrapper for bash commands.
+log.txt		         log of current session.
+Plugins folder       subscribe to events
 ==================== ======================================
 

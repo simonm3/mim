@@ -5,20 +5,22 @@ import logging as log
 from urlparse import urlparse
 
 # callbacks
-from mim.tools.pydispatch2 import on
-from mim.proxyserver import gotRequest
-from mim.proxyclient import gotResponseTree, gotResponseText
+from mim.proxyserver import events as s_events
+from mim.proxyclient import events as c_events
 
 # urls converted https to http
 SSL = set()
 
-@on(gotRequest)
+def init(args):
+    s_events.gotRequest += proxyViaSSL
+    c_events.gotResponseTree += strip
+    c_events.gotResponseText += stripText
+
 def proxyViaSSL(sender):
     if isSSL(sender.uri):
         log.debug("%s Request sent by proxy via SSL %s"%(sender.id, sender.uri))
         sender.scheme = "https"
 
-@on(gotResponseTree)
 def strip(sender, tree):
     """ replace ssl links with http """
     # works with lxml.html
@@ -31,7 +33,6 @@ def strip(sender, tree):
         except:
             pass
     """
-@on(gotResponseText)
 def stripText(sender):
     """ replace https not in links/style tags e.g. in script tags
         NOTE this may prevent some scripts from running correctly

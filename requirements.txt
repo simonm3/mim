@@ -1,6 +1,6 @@
 scapy==2.2.0-dev	        # network packets
 Pillow==2.6.1 				# image manipulation (import PIL)
-PyDispatcher==2.0.3			# publish/subscribe
+Events==0.2.1
 Twisted==14.0.2				# event driven networking
 docopt==0.6.2				# command line options
 lxml==3.4.1 				# html parser

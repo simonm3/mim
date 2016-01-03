@@ -1,19 +1,21 @@
 """ replace favicon with lock icon """
-from tools.logs import log
-
+import logging as log
 import os
 import lxml
 
 # callbacks
-from tools.pydispatch2 import on
-from mim.proxyserver import gotRequest
-from mim.proxyclient import gotResponseTree
+from mim.proxyserver import events as s_events
+from mim.proxyclient import events as c_events
 
 # lockicon to use as favicon.
-with open("%s/../data/lock.ico"%os.getcwd()) as f:
+datafolder = os.path.join(os.path.dirname(__file__), "data")
+with open(os.path.join(datafolder, "lock.ico")) as f:
     lockicon = f.read()
 
-@on(gotResponseTree)
+def init(args):
+    c_events.gotResponseTree += removeFavicon
+    s_events.gotRequest += sendLockFavicon
+
 def removeFavicon(sender, tree):
     """ replace link with standard name so this can be identified on request """
 
@@ -33,7 +35,6 @@ def removeFavicon(sender, tree):
     elem = lxml.etree.fromstring('<link rel="icon" href="/favicon.ico"/>')
     head.append(elem)
 
-@on(gotRequest)
 def sendLockFavicon(sender):
     """ replace favicon with lock file on older browsers """
     if not sender.path.endswith("favicon.ico"):

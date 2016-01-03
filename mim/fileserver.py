@@ -12,7 +12,7 @@ from twisted.internet import reactor
 from twisted.web.resource import Resource
 from twisted.python.filepath import FilePath
 import mimetypes
-from mim.tools.tools import zips, setTitle
+from mim.tools import zips, setTitle
 import os
 
 class Data(Resource):

