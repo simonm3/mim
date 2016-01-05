@@ -9,7 +9,6 @@ loaded = set()
 visited = set()
 
 def init(args):
-    log.info("register events")
     c_events.gotResponseTree += storeLoaded
     s_events.gotRequest += logRequest
 
@@ -29,7 +28,7 @@ def storeLoaded(sender, tree):
 def logRequest(sender):
     """ log requests """
     if sender.host in loaded or sender.domain in visited:
-        pass#return
+        return
 
     visited.add(sender.domain)
     excluded = ['jpg', 'jpeg', 'js', 'json', 'gif', 'png', 'css', 'ico', 'js', 'svg', 'ttf', 'woff']

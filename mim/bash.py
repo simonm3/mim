@@ -20,19 +20,19 @@ def dump(obj, depth=4, l=""):
         canprint=lambda o:isinstance(o, (int, float, str, unicode, bool, types.NoneType, types.LambdaType))
         try:
             if canprint(obj) or sum(not canprint(o) for o in obj) == 0: return repr(obj)
-        except TypeError, e:
+        except TypeError as e:
             pass
         #try to iterate as if obj were a list
         try:
             return "[\n" + "\n".join(l + dump(k, depth=depth-1, l=l+"  ") + "," for k in obj) + "\n" + l + "]"
-        except TypeError, e:
+        except TypeError as e:
             #else, expand/recurse object attribs
             name = (hasattr(obj, '__class__') and obj.__class__.__name__ or type(obj).__name__)
             objdict = {}
             for a in dir(obj):
                 if a[:2] != "__" and (not hasattr(obj, a) or not hasattr(getattr(obj, a), '__call__')):
                     try: objdict[a] = getattr(obj, a)
-                    except Exception, e: objdict[a] = str(e)
+                    except Exception as e: objdict[a] = str(e)
     if name.startswith("_"):
         return ""
     return name + "{\n" + "\n".join(l + repr(k) + ": " + dump(v, depth=depth-1, l=l+"  ") + "," for k, v in objdict.iteritems()) + "\n" + l + "}"

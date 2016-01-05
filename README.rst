@@ -4,9 +4,9 @@ MIM Usage
 Description
 -----------
 
-This is a man-in-the-middle proxy server. Plugins can subscribe to events to
-read and manipulate requests and responses.
+This is a man-in-the-middle proxy server.
 
+Plugins can subscribe to events to read and manipulate requests and responses.
 A number of plugins are included. It is easy to add more based on these.
 
 Installation
@@ -24,13 +24,13 @@ script			description
 ============== =================================
 proxy.py       start the proxyserver with plugins
 users.py       list users on the network so you can select a target
-arp.py	    start arp poison
-fakeap.sh	    create fake access point [https://github.com/DanMcInerney/fakeAP]
+arp.py	      start arp poison
+fakeap.sh	  create fake access point [https://github.com/DanMcInerney/fakeAP]
 
 ============== =================================
 
-Plugin options for proxy.py
----------------------------
+Plugins included
+----------------
 
 ============== ==================================================
 option			description
@@ -83,12 +83,22 @@ Where does it work
 Where does it not work
 ----------------------
 
+Arp attack
+
 * Some security software prevents arp attacks
+* VirtualBox guest that shares mac address with host
+
+HTTPS
+
 * Https requests typed directly in the address bar will not be intercepted
 * HttpsEverywhere (chrome extension) prevents interception
 * Some websites enforce https via the browser e.g. gmail, facebook
 * Some websites change http links back to https after the page loads e.g. ebay
-* Some websites have misformed html. Calling lxml.html.fromstring then tostring can change the appearance of the page as the parser attempts to correct problems. An alternative is to use lxml.etree instead but this causes issues with other pages and is missing functions such as rewrite_links.
+
+Incorrect headers or HTML
+
+* Calling lxml.html.fromstring then tostring can change the page
+* Alternative is to use lxml.etree but this causes issues with other pages
 
 -----
 
@@ -127,9 +137,9 @@ Other files
 ==================== ======================================
 file			     description
 ==================== ======================================
-fileserver.py	     simple file server to serve images
-bash.py		         wrapper for bash commands.
-log.txt		         log of current session.
+fileserver.py	        simple file server to serve images
+bash.py		        wrapper for bash commands.
+log.txt		        log of current session.
 Plugins folder       subscribe to events
 ==================== ======================================
 

