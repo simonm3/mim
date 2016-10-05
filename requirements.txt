@@ -1,10 +1,1 @@
-scapy==2.2.0-dev	        # network packets
-Pillow==2.6.1 				# image manipulation (import PIL)
-Events==0.2.1
-Twisted==14.0.2				# event driven networking
-docopt==0.6.2				# command line options
-lxml==3.4.1 				# html parser
-pyOpenSSL==0.14				# ssl client
-service-identity==14.0.0	# check ssl certificates
-tldextract==1.5.1 			# extract domain from url
-PyYAML==3.11                # yaml parser (import yaml)
+mim
